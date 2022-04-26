@@ -1,7 +1,8 @@
 import './wdyr'
 import 'regenerator-runtime/runtime'
 import React from 'react'
-import ReactDOM from 'react-dom'
+//@ts-ignore
+import { createRoot } from 'react-dom'
 import { Provider } from 'react-redux'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { PersistGate } from 'redux-persist/integration/react'
@@ -11,7 +12,13 @@ import AppProviders from './contexts/AppProviders'
 import reportWebVitals from './reportWebVitals'
 import { persistor, store } from './state/store'
 
-ReactDOM.render(
+const container = document.getElementById('root');
+
+// Create a root.
+const root = createRoot(container);
+
+
+root.render(
   <Router>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
@@ -22,8 +29,7 @@ ReactDOM.render(
         </AppProviders>
       </PersistGate>
     </Provider>
-  </Router>,
-  document.getElementById('root')
+  </Router>
 )
 
 // If you want to start measuring performance in your app, pass a function

@@ -20,7 +20,8 @@
     "install:canary": "yarn add @latitudegames/thoth-core@canary"
   },
   "resolutions": {
-    "@types/react": "18.0.0"
+    "@types/react": "18.0.0",
+    "@types/react-dom": "^18.0.0"
   },
   "dependencies": {
     "@callstack/async-storage": "^2.0.3",
