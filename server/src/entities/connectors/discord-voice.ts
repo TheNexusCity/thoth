@@ -24,6 +24,7 @@ export function initSpeechClient(
     const channel = msg.channel
 
     console.log('got voice input:', content)
+    if(!content) return undefined
     const response = await handleInput(
       content,
       author?.username ?? 'VoiceSpeaker',
