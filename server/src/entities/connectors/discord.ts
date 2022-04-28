@@ -1639,6 +1639,8 @@ export class discord_client {
     voice_language_code
   ) => {
     console.log('creating discord client')
+
+    console.log("spellHandler is", handleInput)
     this.entity = entity
     this.handleInput = handleInput
     this.use_voice = use_voice

@@ -205,6 +205,12 @@ export const CreateSpellHandler = async (props: {
       })
     if (error) return rawOutputs
 
+    console.log('inputs are', inputs)
+    console.log('rawOutputs are ', rawOutputs)
+
+    console.log('message is', message)
+    console.log('response is', formattedOutputs)
+
     let index = undefined
 
     for (const x in formattedOutputs) {
@@ -212,7 +218,7 @@ export const CreateSpellHandler = async (props: {
     }
 
     if (index && index !== undefined) {
-      return formattedOutputs && formattedOutputs[index]
+      return (formattedOutputs && formattedOutputs[index]) || (outputs[0] as any).display
     } else {
       return undefined
     }
