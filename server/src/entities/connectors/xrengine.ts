@@ -25,6 +25,7 @@ import {
   randomInt,
   startsWithCapital,
 } from './utils'
+import { removeEmojisFromString } from '../../utils/utils'
 
 function isUrl(url: string): boolean {
   if (!url || url === undefined || url.length <= 0 || !url.startsWith('http'))
@@ -76,7 +77,7 @@ export class xrengine_client {
     )
   }
 
-  sentMessage(user) {
+  sentMessage(user, userId) {
     for (const c in this.conversation) {
       if (c === user) continue
       if (
@@ -92,6 +93,7 @@ export class xrengine_client {
         timeoutId: undefined,
         timeOutFinished: true,
         isInConversation: true,
+        userId: userId,
       }
       if (this.conversation[user].timeoutId !== undefined)
         clearTimeout(this.conversation[user].timeoutId)
@@ -327,13 +329,13 @@ export class xrengine_client {
           } else if (isInDiscussion || startConv) content = '!ping ' + content
         }
 
-        if (content.startsWith('!ping')) this.sentMessage(sender)
+        if (content.startsWith('!ping')) this.sentMessage(sender, senderId)
         else {
           if (content === '!ping ' || !content.startsWith('!ping')) {
             // if (true) {
             //roomManager.instance.agentCanResponse(user, 'xrengine')) {
             content = '!ping ' + content
-            this.sentMessage(sender)
+            this.sentMessage(sender, senderId)
             // } else {
             //   const oldChat = database.instance.getEvent(
             //     defaultAgent,
@@ -368,6 +370,52 @@ export class xrengine_client {
         }
         log('content: ' + content + ' sender: ' + sender)
 
+        console.log(
+          'in conversation:',
+          this.conversation,
+          this.UsersInRange,
+          this.UsersInHarassmentRange,
+          this.UsersInIntimateRange
+        )
+
+        const roomInfo: {
+          user: string
+          inConversation: boolean
+          isBot: boolean
+          info3d: string
+        }[] = []
+
+        for (let x in this.UsersInRange) {
+          if (!this.checkIfUserIsAdded(roomInfo, x)) {
+            roomInfo.push({
+              user: x,
+              inConversation: this.isInConversation(x),
+              isBot: false,
+              info3d: 'in range',
+            })
+          }
+        }
+        for (let x in this.UsersInHarassmentRange) {
+          if (!this.checkIfUserIsAdded(roomInfo, x)) {
+            roomInfo.push({
+              user: x,
+              inConversation: this.isInConversation(x),
+              isBot: false,
+              info3d: 'in harassment range',
+            })
+          }
+        }
+        for (let x in this.UsersInIntimateRange) {
+          if (!this.checkIfUserIsAdded(roomInfo, x)) {
+            roomInfo.push({
+              user: x,
+              inConversation: this.isInConversation(x),
+              isBot: false,
+              info3d: 'in intimate range',
+            })
+          }
+        }
+
         const response = await this.handleInput(
           content.replace('!ping', ''),
           sender,
@@ -375,6 +423,7 @@ export class xrengine_client {
           'xr-engine',
           channelId,
           this.entity,
+          roomInfo,
           this.settings.xrengine_spell_handler_incoming,
           this.spell_version
         )
@@ -384,6 +433,24 @@ export class xrengine_client {
         await this.handleXREngineResponse(response, addPing, sender, isVoice)
       }
     )
+  }
+
+  checkIfUserIsAdded(
+    arr: {
+      user: string
+      inConversation: boolean
+      isBot: boolean
+      info3d: string
+    }[],
+    user: string
+  ): boolean {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].user == user) {
+        return true
+      }
+    }
+
+    return false
   }
 
   async handleMessages(messages, bot) {
@@ -419,6 +486,7 @@ export class xrengine_client {
       await this.xrengineBot.sendMessage(response)
       if (!(response as string).startsWith('/')) {
         isVoice = true
+        response = removeEmojisFromString(response)
         const fileId = await tts(response as string)
         const url =
           (process.env.FILE_SERVER_URL?.endsWith('/')
@@ -634,7 +702,7 @@ class XREngineBot {
     this.evaluate(msg => {
       try {
         globalThis.sendMessage(msg)
-      } catch (e) { }
+      } catch (e) {}
     }, message)
     /*console.log('typing message')
     await this.typeMessage('newMessage', message, false)
@@ -912,7 +980,7 @@ class XREngineBot {
     await this.waitForTimeout(timeout)
   }
 
-  async interactObject() { }
+  async interactObject() {}
 
   /** Return screenshot
    * @param {Function} fn Function to execut _in the node context._
@@ -1072,7 +1140,6 @@ class XREngineBot {
         const msg = message.text().substring(message.text().indexOf('|') + 2)
         console.log(msg)
         const msgObj = JSON.parse(msg)
-
 
         let isVoice = false
         if (this.useVoice && msgObj.text.startsWith('voice|')) {
