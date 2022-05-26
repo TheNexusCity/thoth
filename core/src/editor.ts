@@ -1,4 +1,3 @@
-import { ThothNode } from './../types'
 import { NodeEditor } from 'rete'
 import ConnectionPlugin from 'rete-connection-plugin'
 import ConnectionReroutePlugin from 'rete-connection-reroute-plugin'
@@ -7,6 +6,7 @@ import ReactRenderPlugin from 'rete-react-render-plugin'
 import { Data } from 'rete/types/core/data'
 
 import { EventsTypes, EditorContext } from '../types'
+import { ThothNode } from './../types'
 import { getComponents } from './components/components'
 import { initSharedEngine } from './engine'
 // import CommentPlugin from './plugins/commentPlugin'
@@ -41,7 +41,7 @@ export class ThothEditor extends NodeEditor<EventsTypes> {
 
 const editorTabMap: Record<string, ThothEditor> = {}
 
-export const initEditor = async function ({
+export const initEditor = function ({
   container,
   pubSub,
   thoth,
@@ -111,7 +111,7 @@ export const initEditor = async function ({
       const tabType = editor.tab.type
       const { workspaceType } = component
 
-      if (isProd && component.dev) return null
+      if (isProd && (component as any).dev) return null
       if (component.deprecated) return null
       if (component.hide) return null
       if (workspaceType && workspaceType !== tabType) return null
@@ -154,9 +154,7 @@ export const initEditor = async function ({
   // })
 
   // WARNING all the plugins from the editor get installed onto the component and modify it.  This effects the components registered in the engine, which already have plugins installed.
-  components.forEach(c => {
-    // eslint-disable-next-line @typescrip``t-eslint/ban-ts-comment
-    //@ts-ignore
+  components.forEach((c: any) => {
     // the problematic type here is coming directly from node modules, we may need to revisit further customizing the Editor Register type expectations or it's class
     editor.register(c)
   })

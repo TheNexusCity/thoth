@@ -16,14 +16,14 @@ import {
   socketKeyFromOutputName,
 } from '../utils/nodeHelpers'
 
-const info = `The Module component allows you to add modules into your chain.  A module is a bundled self contained chain that defines inputs, outputs, and triggers using components.`
+const info = `The Module component allows you to add modules into your graph.  A module is a bundled self contained graph that defines inputs, outputs, and triggers using components.`
 
 export class SpellComponent extends ThothComponent<
   Promise<ModuleWorkerOutput>
 > {
   _task: Task
   updateModuleSockets: Function
-  task
+  task: any
   info
   subscriptionMap: Record<number, Function> = {}
   editor: ThothEditor
@@ -105,8 +105,8 @@ export class SpellComponent extends ThothComponent<
   }
 
   updateSockets(node: ThothNode, spell: Spell) {
-    const chain = JSON.parse(JSON.stringify(spell.chain))
-    this.updateModuleSockets(node, chain, true)
+    const graph = JSON.parse(JSON.stringify(spell.graph))
+    this.updateModuleSockets(node, graph, true)
     node.update()
   }
 

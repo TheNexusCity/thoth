@@ -12,17 +12,17 @@ import reportWebVitals from './reportWebVitals'
 import { persistor, store } from './state/store'
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Router>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <AppProviders>
+  <Router>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <AppProviders>
+          <React.StrictMode>
             <App />
-          </AppProviders>
-        </PersistGate>
-      </Provider>
-    </Router>
-  </React.StrictMode>,
+          </React.StrictMode>
+        </AppProviders>
+      </PersistGate>
+    </Provider>
+  </Router>,
   document.getElementById('root')
 )
 
