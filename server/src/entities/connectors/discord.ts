@@ -721,8 +721,9 @@ export class discord_client {
       'discord',
       message.channel.id,
       this.entity,
-      roomInfo
+      [] //roomInfo
     )
+    console.log('got response:', response)
 
     this.handlePingSoloAgent(message.channel.id, message.id, response, false)
   }

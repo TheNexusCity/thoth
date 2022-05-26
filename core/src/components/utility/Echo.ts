@@ -52,7 +52,6 @@ export class Echo extends ThothComponent<Promise<WorkerReturn>> {
     { silent, thoth }: { silent: boolean; thoth: EngineContext }
   ) {
     const input = inputs.string[0] as string
-
     return {
       output: input,
     }

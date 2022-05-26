@@ -1,6 +1,6 @@
 import {
-  ChainData,
   DataSocketType,
+  ChainData,
   ThothEditor,
   ThothNode,
 } from '../../../types'

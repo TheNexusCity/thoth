@@ -2,7 +2,7 @@
 import { Engine, NodeEditor, Component, Socket } from 'rete/types'
 import { NodeData, WorkerInputs, WorkerOutputs } from 'rete/types/core/data'
 
-import { GraphData, ThothNode } from '../../../types'
+import { ChainData, ThothNode } from '../../../types'
 import { Task } from '../taskPlugin'
 import { Module } from './module'
 import { ModuleManager } from './module-manager'
@@ -136,7 +136,7 @@ function install(
         if (builder) {
           component.updateModuleSockets = (
             node: ThothNode,
-            graphData?: GraphData,
+            graphData?: ChainData,
             useSocketName = false
           ) => {
             const modules = moduleManager.modules

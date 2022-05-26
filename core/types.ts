@@ -108,7 +108,7 @@ export interface Spell {
   id?: string
   user?: Record<string, unknown> | string | null | undefined
   name: string
-  graph: GraphData
+  graph: ChainData
   // Spells: Module[]
   gameState: Record<string, unknown>
   createdAt?: number
@@ -144,7 +144,7 @@ export type ThothNode = Node & {
 export type ModuleType = {
   id: string
   name: string
-  data: GraphData
+  data: ChainData
   createdAt: number
   updatedAt: number
 }
@@ -184,7 +184,7 @@ export type OpenAIResponse = {
   finish_reason: string
 }
 
-export type Subspell = { name: string; id: string; data: GraphData }
+export type Subspell = { name: string; id: string; data: ChainData }
 
 export type ModuleComponent = Component & {
   run: Function
@@ -210,7 +210,7 @@ export type NodeOutputs = {
   }
 }
 
-export type GraphData = Data
+export type ChainData = Data
 
 export type NodeData = ReteNodeData & {
   fewshot?: string

@@ -44,13 +44,13 @@ export class Entity {
     if (this.discord)
       throw new Error('Discord already running for this agent on this instance')
 
+    console.log('spellHandler:', spell_handler, 'spellVersion:', spell_version)
     const spellHandler = await CreateSpellHandler({
       spell: spell_handler,
       version: spell_version,
     })
 
     this.discord = new discord_client()
-    console.log('createDiscordClient')
     await this.discord.createDiscordClient(
       this,
       discord_api_token,
@@ -153,17 +153,21 @@ export class Entity {
 
     this.twitter = new twitter_client()
     console.log('createTwitterClient')
-    await this.twitter.createTwitterClient(spellHandler, {
-      twitter_token,
-      twitter_id,
-      twitter_app_token,
-      twitter_app_token_secret,
-      twitter_access_token,
-      twitter_access_token_secret,
-      twitter_bot_name,
-      twitter_bot_name_regex,
-      twitter_spell_handler_incoming
-    }, entity)
+    await this.twitter.createTwitterClient(
+      spellHandler,
+      {
+        twitter_token,
+        twitter_id,
+        twitter_app_token,
+        twitter_app_token_secret,
+        twitter_access_token,
+        twitter_access_token_secret,
+        twitter_bot_name,
+        twitter_bot_name_regex,
+        twitter_spell_handler_incoming,
+      },
+      entity
+    )
     console.log('Started twitter client for agent ' + this)
     // const response = await spellHandler(
     //   'testmessage',

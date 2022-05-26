@@ -3,7 +3,7 @@ import {
   initSharedEngine,
 } from '@latitudegames/thoth-core/server'
 
-import { EngineContext, GraphData, ModuleComponent, Spell } from '../../types'
+import { EngineContext, ChainData, ModuleComponent, Spell } from '../../types'
 import { extractNodes, ThothEngine } from '../engine'
 import { Module } from '../plugins/modulePlugin/module'
 
@@ -100,7 +100,7 @@ class RunSpell {
     this.currentSpell = spell
 
     // We process the graph for the new spell which will set up all the task workers
-    this.engine.process(spell.graph as GraphData, null, this.context)
+    this.engine.process(spell.graph as ChainData, null, this.context)
   }
 
   /**

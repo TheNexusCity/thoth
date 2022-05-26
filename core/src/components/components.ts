@@ -81,7 +81,6 @@ export const components = {
   code: () => new Code(),
   sentenceMatcher: () => new SentenceMatcher(),
   difficultyDetectorComponent: () => new DifficultyDetectorComponent(),
-  echoComponent: () => new Echo(),
   enkiTask: () => new EnkiTask(),
   entityDetector: () => new EntityDetector(),
   complexStringMatcher: () => new ComplexStringMatcher(),

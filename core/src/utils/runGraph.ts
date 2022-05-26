@@ -1,6 +1,6 @@
 import {
   EngineContext,
-  GraphData,
+  ChainData,
   ModuleComponent,
   NodeData,
   Subspell,
@@ -10,14 +10,14 @@ import { Module } from '../plugins/modulePlugin/module'
 import { extractNodes } from './graphHelpers'
 
 type RunGraphArguments = {
-  graph: GraphData
+  graph: ChainData
   inputs: Record<string, unknown>
   thoth: EngineContext
   engine: ThothEngine
   subspells?: Subspell[]
 }
 
-function getFirstNodeTrigger(data: GraphData, map: Set<unknown>) {
+function getFirstNodeTrigger(data: ChainData, map: Set<unknown>) {
   const extractedNodes = extractNodes(data.nodes, map)
   return extractedNodes[0]
 }

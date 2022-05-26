@@ -2,7 +2,7 @@ import { Engine, Socket, Component } from 'rete'
 import { Socket as SocketType } from 'rete/types'
 
 import {
-  GraphData,
+  ChainData,
   ModuleType,
   ModuleWorkerOutput,
   ThothNode,
@@ -58,7 +58,7 @@ export class ModuleManager {
   }
 
   getSockets(
-    data: GraphData,
+    data: ChainData,
     typeMap: Map<string, Socket>,
     defaultName: string
   ): ModuleSocketType[] {
@@ -74,19 +74,19 @@ export class ModuleManager {
     )
   }
 
-  getInputs(data: GraphData): ModuleSocketType[] {
+  getInputs(data: ChainData): ModuleSocketType[] {
     return this.getSockets(data, this.inputs, 'input')
   }
 
-  getOutputs(data: GraphData): ModuleSocketType[] {
+  getOutputs(data: ChainData): ModuleSocketType[] {
     return this.getSockets(data, this.outputs, 'output')
   }
 
-  getTriggerOuts(data: GraphData): ModuleSocketType[] {
+  getTriggerOuts(data: ChainData): ModuleSocketType[] {
     return this.getSockets(data, this.triggerOuts, 'trigger')
   }
 
-  getTriggerIns(data: GraphData) {
+  getTriggerIns(data: ChainData) {
     return this.getSockets(data, this.triggerIns, 'trigger')
   }
 
@@ -121,7 +121,7 @@ export class ModuleManager {
     this.outputs.set(name, socket)
   }
 
-  getTriggeredNode(data: GraphData, socketKey: string) {
+  getTriggeredNode(data: ChainData, socketKey: string) {
     return extractNodes(data.nodes, this.triggerIns).find(
       node => node.data.socketKey === socketKey
     )

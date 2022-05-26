@@ -1,11 +1,11 @@
 import { NodesData } from 'rete/types/core/data'
 
-import { GraphData, NodeData } from '../../types'
+import { ChainData, NodeData } from '../../types'
 
 /**
  * extracts all module inputs based upon a given key
  */
-export const extractModuleInputKeys = (data: GraphData) =>
+export const extractModuleInputKeys = (data: ChainData) =>
   Object.values(data.nodes).reduce((inputKeys, node: NodeData) => {
     if (node.name !== 'Universal Input') return inputKeys
     if (node.data.name && !node.data.useDefault)

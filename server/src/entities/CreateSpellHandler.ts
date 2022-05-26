@@ -161,7 +161,7 @@ export const CreateSpellHandler = async (props: {
     // We need to reset the task outputs (and tasks in general) without
     // calling this function here
 
-    let error = null
+    let error: string | null = null
     const inputs = inputKeys.reduce((inputs, expectedInput: string) => {
       const requestInput = spellInputs
 
