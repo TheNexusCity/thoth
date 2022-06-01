@@ -87,7 +87,7 @@ export class twilio_client {
       while (
         emptyResponse === undefined ||
         emptyResponse === '' ||
-        emptyResponse.replace(/\s/g, '').length === 0
+        emptyResponse?.replace(/\s/g, '').length === 0
       )
         emptyResponse = getRandomEmptyResponse(
           this.settings['twilio_empty_responses']

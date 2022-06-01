@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path')
 const LicenseWebpackPlugin =
+  // eslint-disable-next-line import/order
   require('license-webpack-plugin').LicenseWebpackPlugin
 
 module.exports = () => {

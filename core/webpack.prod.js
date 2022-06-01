@@ -7,7 +7,8 @@ const BundleAnalyzerPlugin =
 const { merge } = require('webpack-merge')
 const common = require('./webpack.common')
 
-module.exports = () => {
+// eslint-disable-next-line no-undef
+export default () => {
   const commonConfig = common()
 
   const prodConfig = {
@@ -18,6 +19,7 @@ module.exports = () => {
     },
   }
 
+  // eslint-disable-next-line no-undef
   const isAnalyze = typeof process.env.BUNDLE_ANALYZE !== 'undefined'
 
   if (isAnalyze) {

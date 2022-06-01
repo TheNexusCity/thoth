@@ -38,10 +38,7 @@ export class DocumentDelete extends ThothComponent<void> {
     const dataInput = new Rete.Input('trigger', 'Trigger', triggerSocket, true)
     const dataOutput = new Rete.Output('trigger', 'Trigger', triggerSocket)
 
-    return node
-      .addInput(docIdInput)
-      .addInput(dataInput)
-      .addOutput(dataOutput)
+    return node.addInput(docIdInput).addInput(dataInput).addOutput(dataOutput)
   }
 
   async worker(
@@ -52,11 +49,14 @@ export class DocumentDelete extends ThothComponent<void> {
   ) {
     const docId = inputs['docId'][0]
     node.display(docId)
-    const resp = await axios.delete(`${process.env.REACT_APP_SEARCH_SERVER_URL}/document`, {
-      params: {
-        documentId: docId,
-      },
-    })
+    const resp = await axios.delete(
+      `${process.env.REACT_APP_SEARCH_SERVER_URL}/document`,
+      {
+        params: {
+          documentId: docId,
+        },
+      }
+    )
     node.display(resp.data)
   }
 }

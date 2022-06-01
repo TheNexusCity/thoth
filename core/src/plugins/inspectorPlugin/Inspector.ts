@@ -245,7 +245,7 @@ export class Inspector {
     this.node.update()
   }
 
-  get() { }
+  get() {}
 
   // returns all data prepared for the pubsub to send it.
   data(): InspectorData {
@@ -274,5 +274,5 @@ export class Inspector {
     }
   }
 
-  remove() { }
+  remove() {}
 }

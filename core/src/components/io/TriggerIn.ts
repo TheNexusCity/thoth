@@ -111,8 +111,8 @@ export class TriggerIn extends ThothComponent<void> {
 
     const data = node?.data?.playtestToggle as
       | {
-        receivePlaytest: boolean
-      }
+          receivePlaytest: boolean
+        }
       | undefined
 
     const togglePlaytest = new PlaytestControl({

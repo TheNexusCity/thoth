@@ -31,9 +31,7 @@ module.exports = () => {
         },
       ],
     },
-    plugins: [
-      new Dotenv(),
-    ],
+    plugins: [new Dotenv()],
   }
 
   return merge(commonConfig, devConfig)

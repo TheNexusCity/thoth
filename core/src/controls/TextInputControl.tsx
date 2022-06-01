@@ -44,6 +44,7 @@ export class TextInputControl extends Control {
       name: key,
       label,
       value,
+      // eslint-disable-next-line prefer-spread
       putData: (...args) => this.putData.apply(this, args),
     }
   }

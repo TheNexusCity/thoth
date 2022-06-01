@@ -77,14 +77,14 @@ export class DocumentSet extends ThothComponent<void> {
     const description = inputs['description']
       ? (inputs['description'][0] as string)
       : ''
-    const is_included = inputs['isIncluded'][0] as string
+    const isIncluded = inputs['isIncluded'][0] as string
 
     const resp = await axios.post(
       `${process.env.REACT_APP_SEARCH_SERVER_URL}/document`,
       {
         keywords,
         description,
-        is_included,
+        is_included: isIncluded,
         storeId,
       }
     )

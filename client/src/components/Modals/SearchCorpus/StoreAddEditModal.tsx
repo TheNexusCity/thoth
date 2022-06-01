@@ -4,16 +4,21 @@ import Modal from '../../Modal/Modal'
 import css from '../modalForms.module.css'
 import axios from 'axios'
 
-const StoreAddEditModal = ({ closeModal, store, getDocumentsStores, opType }) => { 
+const StoreAddEditModal = ({
+  closeModal,
+  store,
+  getDocumentsStores,
+  opType,
+}) => {
   const [name, setName] = useState(store ? store.name : '')
   const [error, setError] = useState('')
   const performOperation = async () => {
-    switch(opType) {
+    switch (opType) {
       case 'add': {
         let body = { name }
-        if(!name){
+        if (!name) {
           setError('Store Can not be Empty')
-        }else{
+        } else {
           setError('')
           await axios.post(
             `${process.env.REACT_APP_SEARCH_SERVER_URL}/document-store`,
@@ -26,11 +31,11 @@ const StoreAddEditModal = ({ closeModal, store, getDocumentsStores, opType }) =>
       case 'edit': {
         let body = {
           id: store.id,
-          name
+          name,
         }
-        if(!name){
+        if (!name) {
           setError('Store Can not be Empty')
-        }else{
+        } else {
           setError('')
           await axios.put(
             `${process.env.REACT_APP_SEARCH_SERVER_URL}/document-store`,
@@ -40,7 +45,8 @@ const StoreAddEditModal = ({ closeModal, store, getDocumentsStores, opType }) =>
         }
         break
       }
-      default: break
+      default:
+        break
     }
     await getDocumentsStores()
   }
@@ -54,15 +60,15 @@ const StoreAddEditModal = ({ closeModal, store, getDocumentsStores, opType }) =>
     },
   ]
 
-  const onChange = (e) =>{
+  const onChange = e => {
     setName(e.target.value)
-    if(name){
+    if (name) {
       setError('')
     }
   }
 
   return (
-    <Modal title={title} icon='add' options={options}>
+    <Modal title={title} icon="add" options={options}>
       <form>
         <div className="form-item">
           <span className="form-item-label">Store Name:</span>
@@ -72,11 +78,11 @@ const StoreAddEditModal = ({ closeModal, store, getDocumentsStores, opType }) =>
             onChange={e => onChange(e)}
             defaultValue={name}
           ></input>
-          <p style={{color:'red'}}>{error}</p>
+          <p style={{ color: 'red' }}>{error}</p>
         </div>
       </form>
     </Modal>
-  );
+  )
 }
 
-export default StoreAddEditModal;
+export default StoreAddEditModal

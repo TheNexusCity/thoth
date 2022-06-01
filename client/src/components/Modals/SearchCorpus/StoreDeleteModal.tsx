@@ -16,7 +16,7 @@ const StoreDeleteModal = ({ closeModal, store, getDocumentsStores }) => {
     await getDocumentsStores()
     closeModal()
   }
-  
+
   const options = [
     {
       className: `${css['loginButton']} secondary`,
@@ -26,10 +26,12 @@ const StoreDeleteModal = ({ closeModal, store, getDocumentsStores }) => {
   ]
 
   return (
-    <Modal title='Warning' icon='warn' options={options}>
-      <p style={{ whiteSpace: 'pre-line' }}>Are you sure to delete store `{store.name}`?</p>
+    <Modal title="Warning" icon="warn" options={options}>
+      <p style={{ whiteSpace: 'pre-line' }}>
+        Are you sure to delete store `{store.name}`?
+      </p>
     </Modal>
-  );
+  )
 }
 
-export default StoreDeleteModal;
+export default StoreDeleteModal

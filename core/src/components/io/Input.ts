@@ -88,7 +88,6 @@ export class InputComponent extends ThothComponent<InputReturn> {
       name: 'Input name',
     })
 
-
     const toggleDefault = new SwitchControl({
       dataKey: 'useDefault',
       name: 'Use Default',
@@ -110,8 +109,11 @@ export class InputComponent extends ThothComponent<InputReturn> {
     // todo add this somewhere automated? Maybe wrap the modules builder in the plugin
     node.data.socketKey = node?.data?.socketKey || uuidv4()
 
-    return node.addOutput(out).addControl(input)
-      .addInput(dataInput).addOutput(dataOutput)
+    return node
+      .addOutput(out)
+      .addControl(input)
+      .addInput(dataInput)
+      .addOutput(dataOutput)
   }
 
   worker(
@@ -121,7 +123,6 @@ export class InputComponent extends ThothComponent<InputReturn> {
     { silent, data }: { silent: boolean; data: string | undefined }
   ) {
     this._task.closed = ['trigger']
-
 
     // send default value if use default is explicity toggled on
     if (node.data.useDefault) {
@@ -134,7 +135,6 @@ export class InputComponent extends ThothComponent<InputReturn> {
     if (outputs.output && !outputs?.output.task) {
       return outputs as { output: unknown }
     }
-
 
     // handle data subscription.  If there is data, this is from playtest
     if (data && !isEmpty(data)) {

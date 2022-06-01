@@ -4,7 +4,7 @@ import css from './modalForms.module.css'
 import axios from 'axios'
 
 const capitalizeFirstLetter = (word: string) => {
-  if(!word) return ''
+  if (!word) return ''
   return word.charAt(0).toUpperCase() + word.slice(1)
 }
 
@@ -12,14 +12,14 @@ const DocumentEditModal = ({ closeModal, field, document, getDocuments }) => {
   const [val, setValue] = useState(document[field])
 
   const update = async () => {
-    console.log('value ::: ', val);
+    console.log('value ::: ', val)
     const body = {
       ...document,
       documentId: document.id,
       storeId: document.store_id,
-      [field]: val
+      [field]: val,
     }
-    console.log('body ::: ', body);
+    console.log('body ::: ', body)
     await axios.post(
       `${process.env.REACT_APP_SEARCH_SERVER_URL}/update_document`,
       body
@@ -27,7 +27,7 @@ const DocumentEditModal = ({ closeModal, field, document, getDocuments }) => {
     await getDocuments()
     closeModal()
   }
-  
+
   const options = [
     {
       className: `${css['loginButton']} secondary`,
@@ -37,10 +37,12 @@ const DocumentEditModal = ({ closeModal, field, document, getDocuments }) => {
   ]
 
   return (
-    <Modal title='Edit Document' icon='add' options={options}>
+    <Modal title="Edit Document" icon="add" options={options}>
       <form>
         <div className="form-item">
-          <span className="form-item-label">{capitalizeFirstLetter(field)}</span>
+          <span className="form-item-label">
+            {capitalizeFirstLetter(field)}
+          </span>
           <input
             type="text"
             className="form-text-area"
@@ -50,7 +52,7 @@ const DocumentEditModal = ({ closeModal, field, document, getDocuments }) => {
         </div>
       </form>
     </Modal>
-  );
+  )
 }
 
-export default DocumentEditModal;
+export default DocumentEditModal

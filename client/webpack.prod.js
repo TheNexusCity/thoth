@@ -12,10 +12,7 @@ module.exports = () => {
 
   const prodConfig = {
     mode: 'production',
-    plugins: [
-      new CompressionPlugin(),
-      new Dotenv(),
-    ],
+    plugins: [new CompressionPlugin(), new Dotenv()],
     optimization: {
       minimize: true,
       minimizer: [new TerserPlugin()],

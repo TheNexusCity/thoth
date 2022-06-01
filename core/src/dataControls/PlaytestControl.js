@@ -24,7 +24,8 @@ export class PlaytestControl extends DataControl {
     super(options)
   }
 
-  onData(playtestToggle) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onData(_playtestToggle) {
     return
   }
 }

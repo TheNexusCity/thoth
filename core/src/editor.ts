@@ -8,20 +8,20 @@ import { Data } from 'rete/types/core/data'
 import { EventsTypes } from '../types'
 import { getComponents } from './components/components'
 import { EngineContext, initSharedEngine } from './engine'
-import CommentPlugin from './plugins/commentPlugin'
 import AreaPlugin from './plugins/areaPlugin'
+import CommentPlugin from './plugins/commentPlugin'
+import DebuggerPlugin from './plugins/debuggerPlugin'
 import DisplayPlugin from './plugins/displayPlugin'
 import HistoryPlugin from './plugins/historyPlugin'
 import InspectorPlugin from './plugins/inspectorPlugin'
+import KeyCodePlugin from './plugins/keyCodePlugin'
 import LifecyclePlugin from './plugins/lifecyclePlugin'
+import ModulePlugin from './plugins/modulePlugin'
 import { ModuleManager } from './plugins/modulePlugin/module-manager'
+import SelectionPlugin from './plugins/selectionPlugin'
 import SocketGenerator from './plugins/socketGenerator'
 import TaskPlugin, { Task } from './plugins/taskPlugin'
 import { PubSubContext, ThothComponent } from './thoth-component'
-import DebuggerPlugin from './plugins/debuggerPlugin'
-import KeyCodePlugin from './plugins/keyCodePlugin'
-import ModulePlugin from './plugins/modulePlugin'
-import SelectionPlugin from './plugins/selectionPlugin'
 export class ThothEditor extends NodeEditor<EventsTypes> {
   pubSub: PubSubContext
   thoth: EngineContext
@@ -143,7 +143,7 @@ export const initEditor = function ({
 
   // WARNING all the plugins from the editor get installed onto the component and modify it.  This effects the components registered in the engine, which already have plugins installed.
   components.forEach(c => {
-    // eslint-disable-next-line @typescrip``t-eslint/ban-ts-comment
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     // the problematic type here is coming directly from node modules, we may need to revisit further customizing the Editor Register type expectations or it's class
     editor.register(c)

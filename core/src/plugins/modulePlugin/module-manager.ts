@@ -1,5 +1,6 @@
 import { Engine, Socket, Component } from 'rete'
 import { Socket as SocketType } from 'rete/types'
+import { NodeData } from 'rete/types/core/data'
 
 import {
   GraphData,
@@ -12,7 +13,6 @@ import {
 import { SocketNameType } from '../../sockets'
 import { Module } from './module'
 import { extractNodes } from './utils'
-import { NodeData } from 'rete/types/core/data'
 interface ModuleComponent extends Component {
   run: Function
 }
@@ -215,7 +215,7 @@ export class ModuleManager {
   ) {
     if (!module) return
     const socketKey = node.data.socketKey as string
-    console.log('setting output', inputs, "inputs['input']", inputs['input'])
+    //console.log('setting output', inputs, "inputs['input']", inputs['input'])
     module.setOutput(socketKey, outputs['trigger'])
   }
 

@@ -4,8 +4,8 @@ import Icon, { componentCategories } from '../Icon/Icon'
 import css from './Node.module.css'
 
 export class MyNode extends Node {
-  props: { node: any; bindSocket: any; bindControl: any }
-  state: { outputs: any; controls: any; inputs: any; selected: any }
+  props: { node: any, bindSocket: any, bindControl: any }
+  state: { outputs: any, controls: any, inputs: any, selected: any }
 
   render() {
     const { node, bindSocket, bindControl } = this.props

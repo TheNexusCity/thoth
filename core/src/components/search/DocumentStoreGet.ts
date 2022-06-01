@@ -15,7 +15,8 @@ import { EngineContext } from '../../engine'
 import { triggerSocket, anySocket } from '../../sockets'
 import { ThothComponent } from '../../thoth-component'
 
-const info = 'Document Store Get is used to get a document store from the search corpus'
+const info =
+  'Document Store Get is used to get a document store from the search corpus'
 
 type WorkerReturn = {
   output: string
@@ -61,7 +62,7 @@ export class DocumentStoreGet extends ThothComponent<Promise<WorkerReturn>> {
     const resp = await axios.get(
       `${process.env.REACT_APP_SEARCH_SERVER_URL}/document-store/${name}`
     )
-    
+
     return {
       output: resp?.data?.id ?? 0,
     }

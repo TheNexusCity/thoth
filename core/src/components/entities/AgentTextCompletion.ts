@@ -144,7 +144,9 @@ export class AgentTextCompletion extends ThothComponent<Promise<WorkerReturn>> {
 
     const resp = await axios.post(
       `${
-        process.env.REACT_APP_API_URL ?? process.env.API_URL ?? 'https://localhost:8001'
+        process.env.REACT_APP_API_URL ??
+        process.env.API_URL ??
+        'https://localhost:8001'
       }/text_completion`,
       {
         prompt: prompt,

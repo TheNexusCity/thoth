@@ -85,16 +85,13 @@ export class Output extends ThothComponent<void> {
     outputs: ThothWorkerOutputs,
     { silent, thoth }: { silent: boolean; thoth: EngineContext }
   ) {
-    console.log(inputs)
+    //console.log(inputs)
     if (!inputs.input) throw new Error('No input provided to output component')
 
     let text = inputs.input.filter(Boolean)[0]
     const normalText = text as string
 
-    console.log(
-      'voiceOutput:',
-      node.data.voiceOutput && !normalText.startsWith('/')
-    )
+    //console.log('voiceOutput:',node.data.voiceOutput && !normalText.startsWith('/'))
     if (node.data.voiceOutput && !normalText.startsWith('/')) {
       const url = await axios.get(`${API_URL}/speech_to_text`, {
         params: {
@@ -115,8 +112,8 @@ export class Output extends ThothComponent<void> {
 
     if (!silent) node.display(text as string)
 
-    const name = node.data.name as string
-    console.log(name, '- output:', normalText)
+    //const name = node.data.name as string
+    //console.log(name, '- output:', normalText)
 
     return { text }
   }

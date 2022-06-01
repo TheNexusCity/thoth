@@ -102,6 +102,7 @@ export class ThothConsole {
   }
 
   sendSuccess(result: any) {
+    // eslint-disable-next-line no-console
     console.log('Success', result)
   }
 

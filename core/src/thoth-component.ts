@@ -44,8 +44,8 @@ export abstract class ThothComponent<
   category: string
   info: string
   display: boolean
-  deprecated: boolean = false
-  hide: boolean = false
+  deprecated = false
+  hide = false
   deprecationMessage: string | undefined
   module: ModuleOptions
   contextMenuName: string | undefined

@@ -137,9 +137,9 @@ export class Generator extends ThothComponent<Promise<WorkerReturn>> {
 
     const stop = node?.data?.stop
       ? stopSequence.split(',').map(i => {
-        if (i.includes('\n')) return i
-        return i.trim()
-      })
+          if (i.includes('\n')) return i
+          return i.trim()
+        })
       : ''
 
     const tempData = node.data.temp as string
@@ -151,7 +151,7 @@ export class Generator extends ThothComponent<Promise<WorkerReturn>> {
       ? parseFloat(frequencyPenaltyData)
       : 0
 
-    console.log({ model })
+    //console.log({ model })
 
     const body = {
       model,

@@ -49,7 +49,7 @@ export class SpellComponent extends ThothComponent<
       spellId,
       (spell: Spell) => {
         // this can probably be better optimise this
-        console.log('SPELL UPDATED')
+        //console.log('SPELL UPDATED')
         this.updateSockets(node, spell)
       }
     )

@@ -1,6 +1,7 @@
 const { merge } = require('webpack-merge')
 const common = require('./webpack.common')
 
+// eslint-disable-next-line no-undef
 module.exports = () => {
   const commonConfig = common()
 

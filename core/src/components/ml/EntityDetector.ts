@@ -118,8 +118,8 @@ export class EntityDetector extends ThothComponent<
         entities: 'output',
         trigger: 'option',
       },
-      init: () => { },
-      onRun: () => { },
+      init: () => {},
+      onRun: () => {},
     } as TaskOptions
     this.category = 'AI/ML'
     this.display = true
@@ -162,7 +162,9 @@ export class EntityDetector extends ThothComponent<
 
     const resp = await axios.post(
       `${
-        process.env.REACT_APP_API_URL ?? process.env.API_URL ?? 'https://localhost:8001'
+        process.env.REACT_APP_API_URL ??
+        process.env.API_URL ??
+        'https://localhost:8001'
       }/text_completion`,
       {
         params: {

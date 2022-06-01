@@ -69,7 +69,7 @@ export class ProseToScript extends ThothComponent<Promise<WorkerReturn>> {
 
     this.task = {
       outputs: { detectedItem: 'output', trigger: 'option' },
-      init: () => { },
+      init: () => {},
     }
 
     this.category = 'AI/ML'
@@ -106,7 +106,9 @@ export class ProseToScript extends ThothComponent<Promise<WorkerReturn>> {
 
     const resp = await axios.post(
       `${
-        process.env.REACT_APP_API_URL ?? process.env.API_URL ?? 'https://localhost:8001'
+        process.env.REACT_APP_API_URL ??
+        process.env.API_URL ??
+        'https://localhost:8001'
       }/text_completion`,
       {
         params: {

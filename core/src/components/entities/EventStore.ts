@@ -27,9 +27,10 @@ export async function createEvent(
   channel: string
 ) {
   const response = await axios.post(
-    `${process.env.REACT_APP_API_ROOT_URL ??
-    process.env.API_ROOT_URL ??
-    'http://localhost:8001'
+    `${
+      process.env.REACT_APP_API_ROOT_URL ??
+      process.env.API_ROOT_URL ??
+      'http://localhost:8001'
     }/event`,
     {
       type,
