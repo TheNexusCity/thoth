@@ -10,6 +10,7 @@ module.exports = () => {
     mode: 'development',
     devtool: 'source-map',
     devServer: {
+      allowedHosts: 'all',
       https: {
         key: fs.readFileSync('certs/key.pem'),
         cert: fs.readFileSync('certs/cert.pem'),
@@ -31,9 +32,7 @@ module.exports = () => {
         },
       ],
     },
-    plugins: [
-      new Dotenv(),
-    ],
+    plugins: [new Dotenv()],
   }
 
   return merge(commonConfig, devConfig)

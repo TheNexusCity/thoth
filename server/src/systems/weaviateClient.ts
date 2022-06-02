@@ -56,13 +56,14 @@ async function train(data: SearchSchema[]) {
       continue
     }
 
-    const res = await client.data
-      .creator()
-      .withClassName(topic)
-      .withProperties(object)
-      .do()
-
-    console.log(res)
+    try {
+      const res = await client.data
+        .creator()
+        .withClassName(topic)
+        .withProperties(object)
+        .do()
+      console.log(res)
+    } catch (e) {}
   }
 
   const documents = await database.instance.getAllDocuments()
@@ -76,13 +77,14 @@ async function train(data: SearchSchema[]) {
       if (!topic || topic === undefined || topic.length <= 0) {
         continue
       }
-
-      const res = await client.data
-        .creator()
-        .withClassName(topic)
-        .withProperties(object)
-        .do()
-      console.log(res)
+      try {
+        const res = await client.data
+          .creator()
+          .withClassName(topic)
+          .withProperties(object)
+          .do()
+        console.log(res)
+      } catch (e) {}
     }
   }
 
@@ -138,13 +140,15 @@ export async function singleTrain(data: SearchSchema) {
     return
   }
 
-  const res = await client.data
-    .creator()
-    .withClassName(topic)
-    .withProperties(object)
-    .do()
+  try {
+    const res = await client.data
+      .creator()
+      .withClassName(topic)
+      .withProperties(object)
+      .do()
 
-  console.log(res)
+    console.log(res)
+  } catch (e) {}
 }
 
 export async function search(query: string): SearchSchema {
@@ -153,35 +157,38 @@ export async function search(query: string): SearchSchema {
   }
 
   const topic = await classifyText(query)
+  try {
+    const info = await client.graphql
+      .get()
+      .withClassName(topic)
+      .withFields(['title', 'description'])
+      .withNearText({
+        concepts: [query],
+        certainty: 0.7,
+      })
+      .do()
 
-  const info = await client.graphql
-    .get()
-    .withClassName(topic)
-    .withFields(['title', 'description'])
-    .withNearText({
-      concepts: [query],
-      certainty: 0.7,
-    })
-    .do()
-
-  if (info.errors) {
-    console.log(info.errors)
-    return { title: '', description: '' }
-  }
-
-  if (
-    info['data'] &&
-    info['data']['Get'] &&
-    info['data']['Get'][topic] &&
-    info['data']['Get'][topic].length > 0
-  ) {
-    const data = info['data']['Get'][topic][0]
-
-    return {
-      title: data.title,
-      description: data.description,
+    if (info.errors) {
+      console.log(info.errors)
+      return { title: '', description: '' }
     }
-  } else {
+
+    if (
+      info['data'] &&
+      info['data']['Get'] &&
+      info['data']['Get'][topic] &&
+      info['data']['Get'][topic].length > 0
+    ) {
+      const data = info['data']['Get'][topic][0]
+
+      return {
+        title: data.title,
+        description: data.description,
+      }
+    } else {
+      return { title: '', description: '' }
+    }
+  } catch (e) {
     return { title: '', description: '' }
   }
 }
@@ -194,16 +201,17 @@ async function getDocumentId(
     await initWeaviateClient(false)
   }
 
-  const docs = await client.data.getter().do()
-  for (let i = 0; i < docs.objects.length; i++) {
-    if (
-      docs.objects[i].properties.title == title &&
-      docs.objects[i].properties.description == description
-    ) {
-      return docs.objects[i].id
+  try {
+    const docs = await client.data.getter().do()
+    for (let i = 0; i < docs.objects.length; i++) {
+      if (
+        docs.objects[i].properties.title == title &&
+        docs.objects[i].properties.description == description
+      ) {
+        return docs.objects[i].id
+      }
     }
-  }
-
+  } catch (e) {}
   return ''
 }
 

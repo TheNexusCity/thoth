@@ -4,3 +4,4 @@ LICENSE
 
 .env.local
 .env.*.local
+.env
