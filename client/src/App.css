@@ -384,10 +384,6 @@ input[type='text'] {
   height: var(--c4);
 }
 
-.search-corpus > select {
-  width: 50%;
-}
-
 .search-corpus-btns {
   vertical-align: middle;
   display: inline-flex;
@@ -514,4 +510,18 @@ input[type='text'] {
   height: 1.5rem;
   border-radius: 0.4rem;
   margin: 0 0.5rem;
+}
+
+.bare-input {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  outline: none;
+  font-size: 0.975rem;
+}
+
+.adminActive div {
+  background-color: #05c807 !important;
+  color: red !important;
 }

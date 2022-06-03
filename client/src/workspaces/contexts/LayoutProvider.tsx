@@ -18,6 +18,7 @@ const windowTypes: WindowTypes = {
   STATE_MANAGER: 'stateManager',
   EDITOR: 'editor',
   PLAYTEST: 'playtest',
+  CONSOLE: 'debugConsole',
 }
 
 type WindowType =
@@ -26,6 +27,7 @@ type WindowType =
   | 'stateManager'
   | 'editor'
   | 'playtest'
+  | 'debugConsole'
 
 type WindowTypes = Record<string, WindowType>
 
@@ -114,7 +116,7 @@ const LayoutProvider = ({ children, tab }) => {
   }
 
   const createOrFocus = (componentName, title) => {
-    if (!currentModelRef.current || !currentModel) return
+    if (!currentModelRef.current) return
 
     // We are here using a provate variable, so TS isnt picking it up
     // @ts-expect-error
@@ -127,7 +129,7 @@ const LayoutProvider = ({ children, tab }) => {
     )
 
     // the nodeId is stored in the zeroth index of the find
-    if (component) currentModel.doAction(Actions.selectTab(component[0]))
+    if (component) currentModel?.doAction(Actions.selectTab(component[0]))
     if (!component) addWindow(componentName, title)
   }
 

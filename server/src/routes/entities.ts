@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createWikipediaEntity } from '../entities/connectors/wikipedia'
 import { database } from '../database'
 import { handleInput } from '../entities/connectors/handleInput'
@@ -8,12 +9,11 @@ import 'regenerator-runtime/runtime'
 import { noAuth } from '../middleware/auth'
 import { Route } from '../types'
 import axios from 'axios'
-import request from 'request'
-import fetch from 'node-fetch'
 import { cacheManager } from '../cacheManager'
 import { makeCompletion } from '../utils/MakeCompletionRequest'
 import { MakeModelRequest } from '../utils/MakeModelRequest'
 import { tts } from '../systems/googleTextToSpeech'
+import { getAudioUrl } from './getAudioUrl'
 
 export const modules: Record<string, unknown> = {}
 
@@ -116,6 +116,9 @@ const addEntityHandler = async (ctx: Koa.Context) => {
 
   try {
     console.log('updated agent database with', data)
+    if (Object.keys(data).length <= 0) return (
+      ctx.body = await database.instance.createEntity()
+    )
     return (ctx.body = await database.instance.updateEntity(instanceId, data))
   } catch (e) {
     console.log('addEntityHandler:', e)
@@ -144,7 +147,7 @@ const getEvent = async (ctx: Koa.Context) => {
   const client = ctx.request.query.client
   const channel = ctx.request.query.channel
   const maxCount = parseInt(ctx.request.query.maxCount as string)
-  const conversation = await database.instance.getEvents(
+  const event = await database.instance.getEvents(
     type,
     agent,
     speaker,
@@ -154,9 +157,77 @@ const getEvent = async (ctx: Koa.Context) => {
     maxCount
   )
 
-  console.log('conversation, query:', ctx.request.query, 'conv:', conversation)
+  console.log('event, query:', ctx.request.query, 'conv:', event)
 
-  return (ctx.body = conversation)
+  return (ctx.body = event)
+}
+
+const getAllEvents = async (ctx: Koa.Context) => {
+  try {
+    const events = await database.instance.getAllEvents()
+    return (ctx.body = events)
+  } catch (e) {
+    console.log(e)
+    ctx.status = 500
+    return (ctx.body = 'internal error')
+  }
+}
+
+const getSortedEventsByDate = async (ctx: Koa.Context) => {
+  try {
+    const sortOrder = ctx.request.query.order as st
+    if (!['asc', 'desc'].includes(sortOrder)) {
+      ctx.status = 400
+      return (ctx.body = 'invalid sort order')
+    }
+    const events = await database.instance.getSortedEventsByDate(sortOrder)
+    return (ctx.body = events)
+  } catch (e) {
+    console.log(e)
+    ctx.status = 500
+    return (ctx.body = 'internal error')
+  }
+}
+
+const deleteEvent = async (ctx: Koa.Context) => {
+  try {
+    const { id } = ctx.params
+    if (!parseInt(id)) {
+      ctx.status = 400
+      return (ctx.body = 'invalid url parameter')
+    }
+    const res = await database.instance.deleteEvent(id)
+    return (ctx.body = res.rowCount)
+  } catch (e) {
+    console.log(e)
+    ctx.status = 500
+    return (ctx.body = 'internal error')
+  }
+}
+
+const updateEvent = async (ctx: Koa.Context) => {
+  try {
+    const { id } = ctx.params
+    if (!parseInt(id)) {
+      ctx.status = 400
+      return (ctx.body = 'invalid url parameter')
+    }
+
+    const agent = ctx.request.body.agent
+    const sender = ctx.request.body.sender
+    const client = ctx.request.body.client
+    const channel = ctx.request.body.channel
+    const text = ctx.request.body.text
+    const type = ctx.request.body.type
+    const date = ctx.request.body.date
+
+    const res = await database.instance.updateEvent(id, { agent, sender, client, channel, text, type, date })
+    return (ctx.body = res)
+  } catch (e) {
+    console.log(e)
+    ctx.status = 500
+    return (ctx.body = 'internal error')
+  }
 }
 
 const createEvent = async (ctx: Koa.Context) => {
@@ -181,7 +252,8 @@ const createEvent = async (ctx: Koa.Context) => {
 
 const getSpeechToText = async (ctx: Koa.Context) => {
   const text = ctx.request.query.text
-  const character = ctx.request.query.character
+  const character = ctx.request.query.character ?? 'none'
+  console.log("text and character are", text, character)
   const cache = await cacheManager.instance.get(
     character as string,
     'speech_' + character + ': ' + text,
@@ -192,73 +264,23 @@ const getSpeechToText = async (ctx: Koa.Context) => {
     return (ctx.body = cache)
   }
 
-  const fileId = await tts(text as string)
-  const url =
-    (process.env.FILE_SERVER_URL?.endsWith('/')
-      ? process.env.FILE_SERVER_URL
-      : process.env.FILE_SERVER_URL + '/') + fileId
+  // const fileId = await tts(text as string)
+  // const url =
+  //   (process.env.FILE_SERVER_URL?.endsWith('/')
+  //     ? process.env.FILE_SERVER_URL
+  //     : process.env.FILE_SERVER_URL + '/') + fileId
 
-  /*const url = await getAudioUrl(
+  const url = await getAudioUrl(
     process.env.UBER_DUCK_KEY as string,
     process.env.UBER_DUCK_SECRET_KEY as string,
     character as string,
     text as string
-  )*/
+  )
   console.log('stt url:', url)
 
   cacheManager.instance.set('global', 'speech_' + character + ': ' + text, url)
 
   return (ctx.body = url)
-}
-
-function getAudioUrl(
-  key: string,
-  secretKey: string,
-  carachter: string,
-  text: string
-) {
-  if (carachter === undefined) throw new Error('Define the carachter voice.')
-  if (key === undefined) throw new Error('Define the key you got from uberduck')
-  if (carachter === undefined)
-    throw new Error('Define the secret key u got from uberduck.')
-
-  return new Promise(async (resolve, reject) => {
-    await request(
-      {
-        url: 'https://api.uberduck.ai/speak',
-        method: 'POST',
-        body: `{"speech": "${text}","voice": "${carachter}"}`,
-        auth: {
-          user: key,
-          pass: secretKey,
-        },
-      },
-      async (erro: any, response: any, body: any) => {
-        if (erro)
-          throw new Error(
-            'Error when making request, verify if yours params (key, secretKey, carachter) are correct.'
-          )
-        const audioResponse: string =
-          'https://api.uberduck.ai/speak-status?uuid=' + JSON.parse(body).uuid
-        let jsonResponse: any = false
-        async function getJson(url: string) {
-          let jsonResult: any = undefined
-          await fetch(url)
-            .then(res => res.json())
-            .then(json => {
-              jsonResult = json
-            })
-          return jsonResult
-        }
-
-        jsonResponse = await getJson(audioResponse)
-        while (jsonResponse.path === null)
-          jsonResponse = await getJson(audioResponse)
-
-        resolve(jsonResponse.path)
-      }
-    )
-  })
 }
 
 const getEntityImage = async (ctx: Koa.Context) => {
@@ -450,9 +472,8 @@ const requestInformationAboutVideo = async (
   question: string
 ): Promise<string> => {
   const videoInformation = ``
-  const prompt = `Information: ${videoInformation} \n ${sender}: ${
-    question.trim().endsWith('?') ? question.trim() : question.trim() + '?'
-  }\n${agent}:`
+  const prompt = `Information: ${videoInformation} \n ${sender}: ${question.trim().endsWith('?') ? question.trim() : question.trim() + '?'
+    }\n${agent}:`
 
   const modelName = 'davinci'
   const temperature = 0.9
@@ -537,6 +558,59 @@ const handleCustomInput = async (ctx: Koa.Context) => {
   })
 }
 
+const getCalendarEvents = async (ctx: Koa.Context) => {
+  try {
+    let calendarEvents = await database.instance.getCalendarEvents()
+    return (ctx.body = calendarEvents)
+  } catch (e) {
+    ctx.status = 500
+    return (ctx.body = { error: 'internal error' })
+  }
+}
+const addCalendarEvent = async (ctx: Koa.Context) => {
+  const name = ctx.request.body.name
+  const date = ctx.request.body.date
+  const time = ctx.request.body.time
+  const type = ctx.request.body.type
+  const moreInfo = ctx.request.body.moreInfo
+  
+  try {
+    await database.instance.createCalendarEvent(name, date, time, type, moreInfo)
+    return (ctx.body = 'inserted')
+  } catch (e) {
+    ctx.status = 500
+    return (ctx.body = { error: 'internal error' })
+  }
+}
+
+const editCalendarEvent = async (ctx: Koa.Context) => {
+  const id = ctx.params.id
+  const name = ctx.request.body.name 
+  const date = ctx.request.body.date
+  const time = ctx.request.body.time
+  const type = ctx.request.body.type
+  const moreInfo = ctx.request.body.moreInfo
+  
+  try {
+    await database.instance.editCalendarEvent(id, name, date, time, type, moreInfo)
+    return (ctx.body = 'edited')
+  } catch (e) {
+    ctx.status = 500
+    return (ctx.body = { error: 'internal error' })
+  }
+}
+
+const deleteCalendarEvent = async (ctx: Koa.Context) => {
+  const id = ctx.params.id
+  try {
+    await database.instance.deleteCalendarEvent(id)
+    return (ctx.body = 'deleted')
+  } catch (e) {
+    ctx.status = 500
+    return (ctx.body = { error: 'internal error' })
+  }
+}
+
 export const entities: Route[] = [
   {
     path: '/execute',
@@ -564,6 +638,34 @@ export const entities: Route[] = [
     access: noAuth,
     get: getEvent,
     post: createEvent,
+  },
+  {
+    path: '/event/:id',
+    access: noAuth,
+    delete: deleteEvent,
+    put: updateEvent,
+  },
+  {
+    path: '/events',
+    access: noAuth,
+    get: getAllEvents,
+  },
+  {
+    path: '/events_sorted',
+    access: noAuth,
+    get: getSortedEventsByDate,
+  },
+  {
+    path: '/calendar_event',
+    access: noAuth,
+    get: getCalendarEvents,
+    post: addCalendarEvent,
+  },
+  {
+    path: '/calendar_event/:id',
+    access: noAuth,
+    patch: editCalendarEvent,
+    delete: deleteCalendarEvent,
   },
   {
     path: '/speech_to_text',

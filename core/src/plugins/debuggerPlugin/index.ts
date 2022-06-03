@@ -1,5 +1,6 @@
 import { IRunContextEditor } from '../../../types'
 import { ThothComponent } from '../../thoth-component'
+import { outputNameFromSocketKey } from '../../utils/nodeHelpers'
 import { ThothConsole } from './ThothConsole'
 
 function install(
@@ -17,24 +18,34 @@ function install(
   editor.on('componentregister', (component: ThothComponent<unknown>) => {
     const worker = component.worker
 
-    component.worker = (node: any, inputs, outputs, data, ...args) => {
-      const arg = {
+    component.worker = async (node, inputs, outputs, data, ...args) => {
+      node.console = new ThothConsole({
         node,
         component,
         editor,
         server,
         throwError,
-      }
-      node.console = new ThothConsole(arg)
+      })
 
       try {
-        const result = worker.apply(component, [
+        let result = await worker.apply(component, [
           node,
           inputs,
           outputs,
           data,
           ...args,
         ])
+
+        // Hacky way to handle when the spell component returns a response with a UUID in it
+        if (component.name === 'Spell') {
+          result = Object.entries(result).reduce((acc, [uuid, value]) => {
+            const name = outputNameFromSocketKey(node, uuid)
+            if (!name) return acc
+
+            acc[name] = value
+            return acc
+          }, {} as Record<string, any>)
+        }
 
         node.console.log(result)
 

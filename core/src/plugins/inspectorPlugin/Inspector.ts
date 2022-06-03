@@ -62,7 +62,8 @@ export class Inspector {
     control.component = this.component
     control.id = uuidv4()
 
-    if (control.defaultValue)
+    // If we gave a dewfault value and there isnt already one on the node, add it.
+    if (control.defaultValue && !this.node.data[control.dataKey])
       this.node.data[control.dataKey] = control.defaultValue
 
     list.set(control.dataKey, control)
@@ -155,10 +156,10 @@ export class Inspector {
 
       // use the provided information from the socket to generate it
       const newSocket = new SocketConstructor(
-        socket.socketKey || socket.name,
+        socket.useSocketName ? socket.name : socket.socketKey || socket.name,
         socket.name,
         socketMap[socket.socketType],
-        socket.socketType === 'triggerSocket'
+        socket.socketType === 'triggerSocket' || isOutput
       )
 
       if (isOutput) {
@@ -184,12 +185,32 @@ export class Inspector {
     this.node.data.dataControls = cache
   }
 
+  handleLock(update: Record<string, any>) {
+    if (!('nodeLocked' in update.data)) return
+    this.node.data.nodeLocked = update.data.nodeLocked
+  }
+
+  handleDefaultTrigger(update: Record<string, any>) {
+    this.editor.nodes
+      .filter((node: ThothNode) => node.name === 'Module Trigger In')
+      .map((node: ThothNode) => {
+        if (node.data.isDefaultTriggerIn) {
+          node.data.isDefaultTriggerIn = !node.data.isDefaultTriggerIn
+        }
+      })
+
+    this.node.data.isDefaultTriggerIn = update.data.isDefaultTriggerIn
+  }
+
   handleData(update: Record<string, any>) {
     // store all data controls inside the nodes data
     // WATCH in case our graphs start getting quite large.
     if (update.dataControls) this.cacheControls(update.dataControls)
 
     const { data } = update
+
+    this.handleLock(update)
+    this.handleDefaultTrigger(update)
 
     // Send data to a possibel node global handler
     // Turned off until the pattern might be useful

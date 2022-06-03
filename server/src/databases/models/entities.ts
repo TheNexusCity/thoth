@@ -17,6 +17,10 @@ export interface entitiesAttributes {
   discord_spell_handler_incoming?: string
   discord_spell_handler_update?: string
   discord_spell_handler_feed?: string
+  use_voice?: boolean
+  voice_provider?: string
+  voice_character?: string
+  voice_language_code?: string
   xrengine_enabled?: boolean
   xrengine_url?: string
   xrengine_spell_handler_incoming?: string
@@ -35,6 +39,18 @@ export interface entitiesAttributes {
   twitter_access_token_secret?: string
   twitter_bot_name?: string
   twitter_bot_name_regex?: string
+  twitter_spell_handler_incoming?: string
+  telegram_enabled?: boolean
+  telegram_bot_token?: string
+  telegram_bot_name?: string
+  telegram_spell_handler_incoming?: string
+  reddit_enabled?: boolean
+  reddit_app_id?: string
+  reddit_app_secret_id?: string
+  reddit_oauth_token?: string
+  reddit_bot_name?: string
+  reddit_bot_name_regex?: string
+  reddit_spell_handler_incoming?: string
 }
 
 export type entitiesPk = 'id'
@@ -49,6 +65,10 @@ export type entitiesOptionalAttributes =
   | 'discord_spell_handler_incoming'
   | 'discord_spell_handler_update'
   | 'discord_spell_handler_feed'
+  | 'use_voice'
+  | 'voice_provider'
+  | 'voice_character'
+  | 'voice_language_code'
   | 'xrengine_enabled'
   | 'xrengine_url'
   | 'xrengine_spell_handler_incoming'
@@ -65,6 +85,18 @@ export type entitiesOptionalAttributes =
   | 'twitter_access_token_secret'
   | 'twitter_bot_name'
   | 'twitter_bot_name_regex'
+  | 'twitter_spell_handler_incoming'
+  | 'telegram_enabled'
+  | 'telegram_bot_token'
+  | 'telegram_bot_name'
+  | 'telegram_spell_handler_incoming'
+  | 'reddit_enabled'
+  | 'reddit_app_id'
+  | 'reddit_app_secret_id'
+  | 'reddit_oauth_token'
+  | 'reddit_bot_name'
+  | 'reddit_bot_name_regex'
+  | 'reddit_spell_handler_incoming'
   | 'enabled'
   | 'updated_at'
 export type entitiesCreationAttributes = Optional<
@@ -74,7 +106,8 @@ export type entitiesCreationAttributes = Optional<
 
 export class entities
   extends Model<entitiesAttributes, entitiesCreationAttributes>
-  implements entitiesAttributes {
+  implements entitiesAttributes
+{
   id?: number
   instanceId?: number
   personality?: string
@@ -89,6 +122,10 @@ export class entities
   discord_spell_handler_incoming?: string
   discord_spell_handler_update?: string
   discord_spell_handler_feed?: string
+  use_voice?: boolean
+  voice_provider?: string
+  voice_character?: string
+  voice_language_code?: string
   xrengine_enabled?: boolean
   xrengine_url?: string
   xrengine_spell_handler_incoming?: string
@@ -107,6 +144,18 @@ export class entities
   twitter_access_token_secret?: string
   twitter_bot_name?: string
   twitter_bot_name_regex?: string
+  twitter_spell_handler_incoming?: string
+  telegram_enabled?: boolean
+  telegram_bot_token?: string
+  telegram_bot_name?: string
+  telegram_spell_handler_incoming?: string
+  reddit_enabled?: boolean
+  reddit_app_id?: string
+  reddit_app_secret_id?: string
+  reddit_oauth_token?: string
+  reddit_bot_name?: string
+  reddit_bot_name_regex?: string
+  reddit_spell_handler_incoming?: string
 
   static initModel(sequelize: Sequelize.Sequelize): typeof entities {
     return entities.init(
@@ -158,6 +207,22 @@ export class entities
           allowNull: true,
         },
         discord_spell_handler_incoming: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+        use_voice: {
+          type: DataTypes.BOOLEAN,
+          allowNull: true,
+        },
+        voice_provider: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+        voice_character: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+        voice_language_code: {
           type: DataTypes.TEXT,
           allowNull: true,
         },
@@ -238,6 +303,54 @@ export class entities
           allowNull: true,
         },
         twitter_bot_name_regex: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+        twitter_spell_handler_incoming: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+        telegram_enabled: {
+          type: DataTypes.BOOLEAN,
+          allowNull: true,
+        },
+        telegram_bot_token: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+        telegram_bot_name: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+        telegram_spell_handler_incoming: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+        reddit_enabled: {
+          type: DataTypes.BOOLEAN,
+          allowNull: true,
+        },
+        reddit_app_id: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+        reddit_app_secret_id: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+        reddit_oauth_token: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+        reddit_bot_name: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+        reddit_bot_name_regex: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+        reddit_spell_handler_incoming: {
           type: DataTypes.TEXT,
           allowNull: true,
         },

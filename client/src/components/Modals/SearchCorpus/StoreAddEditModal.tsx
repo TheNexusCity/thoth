@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Modal from '../../Modal/Modal'
 import css from '../modalForms.module.css'
 import axios from 'axios'
+import { useSnackbar } from 'notistack'
 
 const StoreAddEditModal = ({
   closeModal,
@@ -12,6 +13,8 @@ const StoreAddEditModal = ({
 }) => {
   const [name, setName] = useState(store ? store.name : '')
   const [error, setError] = useState('')
+  const { enqueueSnackbar } = useSnackbar()
+
   const performOperation = async () => {
     switch (opType) {
       case 'add': {
@@ -24,6 +27,7 @@ const StoreAddEditModal = ({
             `${process.env.REACT_APP_SEARCH_SERVER_URL}/document-store`,
             body
           )
+          enqueueSnackbar('Document store created', { variant: 'success' })
           closeModal()
         }
         break
@@ -41,6 +45,7 @@ const StoreAddEditModal = ({
             `${process.env.REACT_APP_SEARCH_SERVER_URL}/document-store`,
             body
           )
+          enqueueSnackbar('Document store updated', { variant: 'success' })
           closeModal()
         }
         break

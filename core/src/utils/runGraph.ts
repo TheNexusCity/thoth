@@ -1,5 +1,11 @@
-import { GraphData, ModuleComponent, NodeData, Subspell } from '../../types'
-import { EngineContext, ThothEngine } from '../engine'
+import {
+  EngineContext,
+  GraphData,
+  ModuleComponent,
+  NodeData,
+  Subspell,
+} from '../../types'
+import { ThothEngine } from '../engine'
 import { Module } from '../plugins/modulePlugin/module'
 import { extractNodes } from './graphHelpers'
 
@@ -46,7 +52,7 @@ export const runGraph = async ({
   // you can see this at work in the 'workerInputs' function of module-manager
   // work inputs worker reads from the module inputs via the key in node.data.name
   // important to note: even single string values are wrapped in arrays due to match the client editor format
-  module.read(inputs)
+  module.read(inputs as any)
 
   // ThothContext: map of services expected by Thoth components,
   // allowing client and server provide different sets of helpers that match the common interface

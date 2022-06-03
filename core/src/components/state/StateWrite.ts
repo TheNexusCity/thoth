@@ -1,13 +1,13 @@
 import Rete from 'rete'
 
 import {
+  EngineContext,
   ThothNode,
   NodeData,
   ThothWorkerInputs,
   ThothWorkerOutputs,
 } from '../../../types'
 import { SocketGeneratorControl } from '../../dataControls/SocketGenerator'
-import { EngineContext } from '../../engine'
 import { triggerSocket } from '../../sockets'
 import { ThothComponent } from '../../thoth-component'
 
@@ -21,7 +21,7 @@ export class StateWrite extends ThothComponent<void> {
     super('State Write')
 
     this.task = {
-      outputs: {},
+      outputs: { trigger: 'option' },
     }
 
     this.workspaceType = 'spell'
@@ -30,7 +30,13 @@ export class StateWrite extends ThothComponent<void> {
   }
 
   builder(node: ThothNode) {
-    const dataInput = new Rete.Input('trigger', 'Trigger', triggerSocket, true)
+    const socketInput = new Rete.Input(
+      'trigger',
+      'Trigger',
+      triggerSocket,
+      true
+    )
+    const socketOut = new Rete.Output('trigger', 'Trigger', triggerSocket, true)
 
     const inputGenerator = new SocketGeneratorControl({
       connectionType: 'input',
@@ -39,7 +45,8 @@ export class StateWrite extends ThothComponent<void> {
     })
 
     node.inspector.add(inputGenerator)
-    node.addInput(dataInput)
+
+    node.addInput(socketInput).addOutput(socketOut)
 
     return node
   }

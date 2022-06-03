@@ -25,6 +25,8 @@ import {
   randomInt,
   startsWithCapital,
 } from './utils'
+import { removeEmojisFromString } from '../../utils/utils'
+import { cacheManager } from '../../cacheManager'
 
 function isUrl(url: string): boolean {
   if (!url || url === undefined || url.length <= 0 || !url.startsWith('http'))
@@ -38,7 +40,6 @@ function isUrl(url: string): boolean {
   }
 }
 
-let xr = undefined
 export class xrengine_client {
   handleInput
   UsersInRange = {}
@@ -77,7 +78,7 @@ export class xrengine_client {
     )
   }
 
-  sentMessage(user) {
+  sentMessage(user, userId) {
     for (const c in this.conversation) {
       if (c === user) continue
       if (
@@ -93,6 +94,7 @@ export class xrengine_client {
         timeoutId: undefined,
         timeOutFinished: true,
         isInConversation: true,
+        userId: userId,
       }
       if (this.conversation[user].timeoutId !== undefined)
         clearTimeout(this.conversation[user].timeoutId)
@@ -328,13 +330,13 @@ export class xrengine_client {
           } else if (isInDiscussion || startConv) content = '!ping ' + content
         }
 
-        if (content.startsWith('!ping')) this.sentMessage(sender)
+        if (content.startsWith('!ping')) this.sentMessage(sender, senderId)
         else {
           if (content === '!ping ' || !content.startsWith('!ping')) {
             // if (true) {
             //roomManager.instance.agentCanResponse(user, 'xrengine')) {
             content = '!ping ' + content
-            this.sentMessage(sender)
+            this.sentMessage(sender, senderId)
             // } else {
             //   const oldChat = database.instance.getEvent(
             //     defaultAgent,
@@ -369,6 +371,52 @@ export class xrengine_client {
         }
         log('content: ' + content + ' sender: ' + sender)
 
+        console.log(
+          'in conversation:',
+          this.conversation,
+          this.UsersInRange,
+          this.UsersInHarassmentRange,
+          this.UsersInIntimateRange
+        )
+
+        const roomInfo: {
+          user: string
+          inConversation: boolean
+          isBot: boolean
+          info3d: string
+        }[] = []
+
+        for (let x in this.UsersInRange) {
+          if (!this.checkIfUserIsAdded(roomInfo, x)) {
+            roomInfo.push({
+              user: x,
+              inConversation: this.isInConversation(x),
+              isBot: false,
+              info3d: 'in range',
+            })
+          }
+        }
+        for (let x in this.UsersInHarassmentRange) {
+          if (!this.checkIfUserIsAdded(roomInfo, x)) {
+            roomInfo.push({
+              user: x,
+              inConversation: this.isInConversation(x),
+              isBot: false,
+              info3d: 'in harassment range',
+            })
+          }
+        }
+        for (let x in this.UsersInIntimateRange) {
+          if (!this.checkIfUserIsAdded(roomInfo, x)) {
+            roomInfo.push({
+              user: x,
+              inConversation: this.isInConversation(x),
+              isBot: false,
+              info3d: 'in intimate range',
+            })
+          }
+        }
+
         const response = await this.handleInput(
           content.replace('!ping', ''),
           sender,
@@ -376,6 +424,7 @@ export class xrengine_client {
           'xr-engine',
           channelId,
           this.entity,
+          roomInfo,
           this.settings.xrengine_spell_handler_incoming,
           this.spell_version
         )
@@ -385,6 +434,24 @@ export class xrengine_client {
         await this.handleXREngineResponse(response, addPing, sender, isVoice)
       }
     )
+  }
+
+  checkIfUserIsAdded(
+    arr: {
+      user: string
+      inConversation: boolean
+      isBot: boolean
+      info3d: string
+    }[],
+    user: string
+  ): boolean {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].user == user) {
+        return true
+      }
+    }
+
+    return false
   }
 
   async handleMessages(messages, bot) {
@@ -404,7 +471,7 @@ export class xrengine_client {
   }
 
   async handleXREngineResponse(response, addPing, sender, isVoice) {
-    if (response === undefined || !response) {
+    if (response === undefined || !response || response.length <= 0) {
       return
     }
     console.log('response: ' + response)
@@ -420,16 +487,29 @@ export class xrengine_client {
       await this.xrengineBot.sendMessage(response)
       if (!(response as string).startsWith('/')) {
         isVoice = true
-        const fileId = await tts(response as string)
-        const url =
-          (process.env.FILE_SERVER_URL?.endsWith('/')
-            ? process.env.FILE_SERVER_URL
-            : process.env.FILE_SERVER_URL + '/') + fileId
+        response = removeEmojisFromString(response)
+        const temp = response
+        const cache = await cacheManager.instance.get(
+          this.agent,
+          'voice_' + temp,
+          true
+        )
+        if (cache) {
+          response = cache
+          console.log('got from cache:', cache)
+        } else {
+          const fileId = await tts(response as string)
+          const url =
+            (process.env.FILE_SERVER_URL?.endsWith('/')
+              ? process.env.FILE_SERVER_URL
+              : process.env.FILE_SERVER_URL + '/') + fileId
 
-        console.log('url:', url)
-        response = url
+          console.log('url:', url)
+          response = url
+        }
         await this.xrengineBot.delay(1000)
         await this.xrengineBot.sendMessage('!voiceUrl|' + response)
+        cacheManager.instance.set(this.agent, 'voice_' + temp, response)
       }
       return
     }
@@ -466,6 +546,7 @@ export class xrengine_client {
 
   doTests = false
   xrengineBot = null
+  xvfb
   agent
   settings
 
@@ -505,30 +586,18 @@ export class xrengine_client {
     //   xr.quit()
     //   xr = undefined
     // }
-    if (xr) {
-      console.log('***********agent', agent)
-      this.xrengineBot = new XREngineBot({
-        headless: true,
-        agent: agent,
-        settings: settings,
-        xrengineclient: this,
-        old: { bool: true, browser: xr.browser, page: xr.page, pu: xr.pu },
-      })
-      xr = undefined
-    } else {
-      this.xrengineBot = new XREngineBot({
-        headless: true,
-        agent: agent,
-        settings: settings,
-        xrengineclient: this,
-      })
-    }
-    xr = this.xrengineBot
-    const xvfb = new Xvfb()
-    await xvfb.start(async function (err, xvfbProcess) {
+    this.xrengineBot = new XREngineBot({
+      headless: true,
+      agent: agent,
+      settings: settings,
+      xrengineclient: this,
+    })
+
+    this.xvfb = new Xvfb()
+    await this.xvfb.start(async function (err, xvfbProcess) {
       if (err) {
         console.log(err)
-        xvfb.stop(function (_err) {
+        this.xvfb.stop(function (_err) {
           if (_err) log(_err)
         })
       }
@@ -538,9 +607,7 @@ export class xrengine_client {
         console.log('Preparing to connect to ', settings.url)
         cli.xrengineBot.delay(3000 + Math.random() * 1000)
         console.log('Connecting to server...')
-        if (!xr) {
-          await cli.xrengineBot.launchBrowser()
-        }
+        await cli.xrengineBot.launchBrowser()
         const XRENGINE_URL =
           (settings.url as string) || 'https://n3xus.city/location/test'
         cli.xrengineBot.enterRoom(XRENGINE_URL, settings.xrengine_bot_name)
@@ -549,6 +616,17 @@ export class xrengine_client {
         console.log('XVFB ERROR:', e)
       }
     })
+  }
+  destroy() {
+    if (this.xrengienBot) {
+      this.xrengineBot.destroy()
+    }
+    if (this.xvfb) {
+      this.xvfb.stop()
+    }
+
+    this.xrengineBot = null
+    this.xvfb = null
   }
 }
 
@@ -594,8 +672,17 @@ class XREngineBot {
     this.settings = settings
     this.xrengineclient = xrengineclient
     this.handleInput = settings.handleInput
+    this.useVoice = settings.use_voice
+    this.voiceProvider = settings.voice_provider
+    this.voiceCharacter = settings.voice_character
     setInterval(() => this.instanceMessages(), 1000)
     this.messageLoop()
+  }
+  destroy() {
+    this.browser.close()
+    this.browser = undefined
+    this.page = undefined
+    this.pu = undefined
   }
 
   //delay in seconds
@@ -1066,8 +1153,9 @@ class XREngineBot {
         const msg = message.text().substring(message.text().indexOf('|') + 2)
         console.log(msg)
         const msgObj = JSON.parse(msg)
+
         let isVoice = false
-        if (msgObj.text.startsWith('voice|')) {
+        if (this.useVoice && msgObj.text.startsWith('voice|')) {
           msgObj.text = msgObj.text.substring(msgObj.text.indexOf('|') + 1)
           isVoice = false // true
         }
@@ -1094,7 +1182,7 @@ class XREngineBot {
           msgObj.text,
           msgObj.updatedAt,
           this,
-          true
+          this.useVoice
         )
       }
 

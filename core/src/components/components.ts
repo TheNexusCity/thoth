@@ -7,6 +7,7 @@ import { CreateOrGetAgent } from './entities/CreateOrGetAgent'
 import { EventRecall } from './entities/EventRecall'
 import { EventStore } from './entities/EventStore'
 import { InputDestructureComponent } from './entities/InputDestructure'
+import { InputRestructureComponent } from './entities/InputRestructure'
 import { Request } from './entities/Request'
 import { InputComponent } from './io/Input'
 import { Output } from './io/Output'
@@ -20,6 +21,7 @@ import { IsNullOrUndefined } from './logic/IsNullOrUndefined'
 import { IsVariableTrue } from './logic/IsVariableTrue'
 import { LogicalOperator } from './logic/LogicalOperator'
 import { SwitchGate } from './logic/SwitchGate'
+import { WaitForAll } from './logic/WaitForAll'
 import { WhileLoop } from './logic/WhileLoop'
 import { ActionTypeComponent } from './ml/ActionType'
 import { Classifier } from './ml/Classifier'
@@ -43,10 +45,13 @@ import { DocumentGet } from './search/DocumentGet'
 import { DocumentSet } from './search/DocumentSet'
 import { DocumentStoreGet } from './search/DocumentStoreGet'
 import { Search } from './search/Search'
+import { VectorSearch } from './search/VectorSearch'
+import { SpellComponent } from './Spell'
 import { StateRead } from './state/StateRead'
 import { StateWrite } from './state/StateWrite'
 import { ComplexStringMatcher } from './strings/ComplexStringMatcher'
 import { JoinListComponent } from './strings/JoinList'
+import { ProfanityFilter } from './strings/ProfanityFilter'
 import { RandomStringFromList } from './strings/RandomStringFromList'
 import { StringAdder } from './strings/StringAdder'
 import { StringCombiner } from './strings/StringCombiner'
@@ -92,6 +97,7 @@ export const components = {
   conversationRecall: () => new EventRecall(),
   request: () => new Request(),
   search: () => new Search(),
+  vectorSearch: () => new VectorSearch(),
   documentGet: () => new DocumentGet(),
   documentEdit: () => new DocumentEdit(),
   documentDelete: () => new DocumentDelete(),
@@ -108,6 +114,7 @@ export const components = {
   stringVariable: () => new StringVariable(),
   fewshotVariable: () => new FewshotVariable(),
   stringAdder: () => new StringAdder(),
+  profanityFilter: () => new ProfanityFilter(),
   numberVariable: () => new NumberVariable(),
   booleanVariable: () => new BooleanVariable(),
   arrayVariable: () => new ArrayVariable(),
@@ -117,9 +124,11 @@ export const components = {
   huggingfaceComponent: () => new HuggingfaceComponent(),
   inputComponent: () => new InputComponent(),
   inputDestructureComponent: () => new InputDestructureComponent(),
+  inputRestructureComponent: () => new InputRestructureComponent(),
   inputsToJson: () => new InputsToJSON(),
   itemTypeComponent: () => new ItemTypeComponent(),
   joinListComponent: () => new JoinListComponent(),
+  moduleComponent: () => new SpellComponent(),
   output: () => new Output(),
   proseToScript: () => new ProseToScript(),
   safetyVerifier: () => new SafetyVerifier(),
@@ -131,6 +140,7 @@ export const components = {
   timeDetectorComponent: () => new TimeDetectorComponent(),
   triggerIn: () => new TriggerIn(),
   triggerOut: () => new TriggerOut(),
+  waitForAll: () => new WaitForAll(),
 }
 
 export const getComponents = () => {
