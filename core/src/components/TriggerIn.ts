@@ -6,11 +6,11 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { EditorContext, NodeData, ThothNode } from '../../types'
 import { InputControl } from '../dataControls/InputControl'
+import { PlaytestControl } from '../dataControls/PlaytestControl'
+import { SwitchControl } from '../dataControls/SwitchControl'
 import { TaskOptions } from '../plugins/taskPlugin/task'
 import { triggerSocket } from '../sockets'
 import { ThothComponent, ThothTask } from '../thoth-component'
-import { PlaytestControl } from '../dataControls/PlaytestControl'
-import { SwitchControl } from '../dataControls/SwitchControl'
 const info = `The trigger in allows you to pass values into your spell either from a higher level component or from the server.  There must be one single trigger into a spell for now as the server does not support multiple triggers.  Yet.`
 
 export class TriggerIn extends ThothComponent<void> {
@@ -110,11 +110,7 @@ export class TriggerIn extends ThothComponent<void> {
 
   async run(node: ThothNode, data: NodeData) {
     const task = this.nodeTaskMap[node.id]
-    try {
-      await task.run(data)
-    } catch (err: any) {
-      throw err
-    }
+    await task.run(data)
   }
 
   // the builder is used to "assemble" the node component.

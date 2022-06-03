@@ -3,7 +3,7 @@ import {
   ThothNode,
   ThothWorkerInputs,
   ThothWorkerOutputs,
-  EngineContext
+  EngineContext,
 } from '../../../types'
 import { EnkiThroughputControl } from '../../dataControls/EnkiThroughputControl'
 import { ThothComponent } from '../../thoth-component'

@@ -13,7 +13,7 @@ import {
   arraySocket,
   stringSocket,
   triggerSocket,
-  agentSocket
+  agentSocket,
 } from '../../sockets'
 import { ThothComponent, ThothTask } from '../../thoth-component'
 
@@ -93,14 +93,16 @@ export class InputRestructureComponent extends ThothComponent<
   async worker(
     node: NodeData,
     inputs: ThothWorkerInputs,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     outputs: ThothWorkerOutputs,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     { silent }: { silent: boolean }
   ) {
-    let agent: any = {}
+    const agent: any = {}
     Object.entries(inputs).map(([k, v]) => {
       agent[k] = v[0]
     })
-    console.log('agent ::: ', agent);
+    console.log('agent ::: ', agent)
 
     return {
       output: {
@@ -110,8 +112,8 @@ export class InputRestructureComponent extends ThothComponent<
         Client: agent.client,
         ChannelID: agent.channel,
         Entity: agent.entity,
-        RoomInfo: agent.roomInfo
-      }
+        RoomInfo: agent.roomInfo,
+      },
     }
   }
 }

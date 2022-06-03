@@ -10,7 +10,7 @@ import {
   NodeData,
   ThothNode,
   ThothWorkerInputs,
-  ThothWorkerOutputs
+  ThothWorkerOutputs,
 } from '../../../types'
 import { anySocket, stringSocket, triggerSocket } from '../../sockets'
 import { ThothComponent } from '../../thoth-component'

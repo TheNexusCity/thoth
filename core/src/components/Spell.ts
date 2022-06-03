@@ -135,6 +135,7 @@ export class SpellComponent extends ThothComponent<
     inputs: ThothWorkerInputs,
     _outputs: { [key: string]: string },
     {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       module,
       thoth,
       silent,

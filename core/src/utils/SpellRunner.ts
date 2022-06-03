@@ -1,4 +1,3 @@
-//@ts-nocheck
 import {
   EngineContext,
   GraphData,
@@ -180,7 +179,7 @@ class SpellRunner {
   async runComponent(
     inputs: Record<string, any>,
     componentName: string,
-    runSubspell: boolean = false
+    runSubspell = false
   ) {
     // This should break us out of an infinite loop if we have circular spell dependencies.
     if (runSubspell && this.ranSpells.includes(this.currentSpell.name)) {
@@ -211,7 +210,7 @@ class SpellRunner {
   /**
    * temporary function to be backwards compatible with current use of run spell
    */
-  async defaultRun(inputs: Record<string, any>, runSubspell: boolean = false) {
+  defaultRun(inputs: Record<string, any>, runSubspell = false) {
     return this.runComponent(inputs, 'Module Trigger In', runSubspell)
   }
 }

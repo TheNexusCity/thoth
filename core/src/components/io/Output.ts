@@ -85,12 +85,9 @@ export class Output extends ThothComponent<void> {
     let text = inputs.input.filter(Boolean)[0] as string
     const normalText = text as string
 
-    console.log(
-      'voiceOutput:',
-      node.data.voiceOutput && !normalText.startsWith('/')
-    )
+    //console.log('voiceOutput:',node.data.voiceOutput && !normalText.startsWith('/'))
 
-    console.log('normalText is', normalText)
+    //console.log('normalText is', normalText)
 
     if (normalText && node.data.voiceOutput && !normalText.startsWith('/')) {
       const url = await axios.get(`${API_URL}/speech_to_text`, {

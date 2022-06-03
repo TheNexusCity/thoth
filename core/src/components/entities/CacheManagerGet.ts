@@ -10,7 +10,7 @@ import {
   NodeData,
   ThothNode,
   ThothWorkerInputs,
-  ThothWorkerOutputs
+  ThothWorkerOutputs,
 } from '../../../types'
 import { BooleanControl } from '../../dataControls/BooleanControl'
 import { anySocket, stringSocket, triggerSocket } from '../../sockets'

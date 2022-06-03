@@ -5,7 +5,7 @@ import {
   ThothNode,
   ThothWorkerInputs,
   ThothWorkerOutputs,
-  EngineContext
+  EngineContext,
 } from '../../../types'
 import { FewshotControl } from '../../dataControls/FewshotControl'
 import { stringSocket, triggerSocket } from '../../sockets'
@@ -71,7 +71,7 @@ export class DifficultyDetectorComponent extends ThothComponent<
   displayControl = {}
 
   builder(node: ThothNode) {
-    if(!node.data.fewshot) node.data.fewshot = fewshot
+    if (!node.data.fewshot) node.data.fewshot = fewshot
     const inp = new Rete.Input('action', 'Action', stringSocket)
     const difficultyOut = new Rete.Output(
       'difficulty',

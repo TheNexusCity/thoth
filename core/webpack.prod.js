@@ -1,10 +1,17 @@
+// eslint-disable-next-line
 const Dotenv = require('dotenv-flow-webpack')
+// eslint-disable-next-line
 const CompressionPlugin = require('compression-webpack-plugin')
+// eslint-disable-next-line
 const TerserPlugin = require('terser-webpack-plugin')
+
 const BundleAnalyzerPlugin =
+  // eslint-disable-next-line
   require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
+// eslint-disable-next-line
 const { merge } = require('webpack-merge')
+// eslint-disable-next-line
 const common = require('./webpack.common')
 
 // eslint-disable-next-line no-undef

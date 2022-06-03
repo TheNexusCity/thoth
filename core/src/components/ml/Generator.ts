@@ -174,7 +174,7 @@ export class Generator extends ThothComponent<Promise<WorkerReturn>> {
         composed,
       }
     } catch (err) {
-      console.log({ err })
+      //console.log({ err })
       // Typescript reporting wrong about number of arguments for error constructor
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore:next-line

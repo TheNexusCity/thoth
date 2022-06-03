@@ -45,10 +45,13 @@ export class Echo extends ThothComponent<Promise<WorkerReturn>> {
       .addOutput(outp)
   }
 
+  // eslint-disable-next-line require-await
   async worker(
     node: NodeData,
     inputs: ThothWorkerInputs,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     outputs: ThothWorkerOutputs,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     { silent, thoth }: { silent: boolean; thoth: EngineContext }
   ) {
     const input = inputs.string[0] as string

@@ -25,6 +25,7 @@ export default class SocketManager {
     if (!this.node.data.outputs) this.node.data.outputs = []
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateSocketsFromChain(chain: GraphData) {}
 
   regenerateSockets() {}
