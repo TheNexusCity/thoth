@@ -285,11 +285,14 @@ const getTextToSpeech = async (ctx: Koa.Context) => {
         text as string
       )
     } else {
-      url = await tts(
-        text,
-        voice_character,
-        voice_language_code
-      )
+      url = await tts(text, voice_character, voice_language_code)
+
+      if (url && url.length > 0) {
+        url =
+          (process.env.FILE_SERVER_URL?.endsWith('/')
+            ? process.env.FILE_SERVER_URL
+            : process.env.FILE_SERVER_URL + '/') + url
+      }
     }
   }
 
