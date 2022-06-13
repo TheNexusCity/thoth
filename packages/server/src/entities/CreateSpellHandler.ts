@@ -9,10 +9,10 @@ import { Graph, ModuleComponent } from '../routes/spells/types'
 import {
   initSharedEngine,
   getComponents,
-} from '@latitudegames/thoth-core/dist/server'
+} from '@thoth/core/server'
 import { Module } from '../routes/spells/module'
-import { ModuleType } from '@latitudegames/thoth-core/types'
-import { Task } from '@latitudegames/thoth-core/src/plugins/taskPlugin/task'
+import { ModuleType } from '@thoth/core/types'
+import { Task } from '@thoth/core/src/plugins/task/task'
 
 export const CreateSpellHandler = async (props: {
   spell: any

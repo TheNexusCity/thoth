@@ -2,7 +2,7 @@ import vm2 from 'vm2'
 import {
   EngineContext,
   ThothWorkerInputs,
-} from '@latitudegames/thoth-core/dist/types'
+} from '@thoth/core/dist/types'
 import { completion } from './api/completion'
 import { runSpell } from './api/spell'
 

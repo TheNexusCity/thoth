@@ -10,7 +10,7 @@ import {
 } from '../../../types'
 import { SpellControl } from '../../dataControls/SpellControl'
 import { ThothEditor } from '../../editor'
-import { Task } from '../../plugins/taskPlugin/task'
+import { Task } from '../../plugins/task/task'
 import { ThothComponent } from '../../thoth-component'
 import {
   inputNameFromSocketKey,

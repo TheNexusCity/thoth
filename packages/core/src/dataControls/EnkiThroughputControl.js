@@ -1,4 +1,4 @@
-import { DataControl } from '../plugins/inspectorPlugin'
+import { DataControl } from '../plugins/inspector'
 export class EnkiThroughputControl extends DataControl {
   constructor({
     socketType = 'String',

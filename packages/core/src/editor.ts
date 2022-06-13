@@ -1,30 +1,31 @@
+// @ts-nocheck
 import { NodeEditor } from 'rete'
-import ConnectionPlugin from 'rete-connection-plugin'
-import ConnectionReroutePlugin from 'rete-connection-reroute-plugin'
-import ContextMenuPlugin from 'rete-context-menu-plugin'
-import ReactRenderPlugin from 'rete-react-render-plugin'
+import ConnectionPlugin from '@thoth/core/src/plugins/connection'
+import ConnectionReroutePlugin from '@thoth/core/src/plugins/connectionReroute'
+import ContextMenuPlugin from '@thoth/core/src/plugins/contextMenu'
+import ReactRenderPlugin from '@thoth/core/src/plugins/reactRender'
 import { Data } from 'rete/types/core/data'
 import { EventsTypes, EditorContext } from '../types'
 import { ThothNode } from './../types'
 import { getComponents } from './components/components'
 import { initSharedEngine, ThothEngine } from './engine'
-// import CommentPlugin from './plugins/commentPlugin'
-import AreaPlugin from './plugins/areaPlugin'
-import DebuggerPlugin from './plugins/debuggerPlugin'
-import DisplayPlugin from './plugins/displayPlugin'
-import HistoryPlugin from './plugins/historyPlugin'
-import InspectorPlugin from './plugins/inspectorPlugin'
-import KeyCodePlugin from './plugins/keyCodePlugin'
-import LifecyclePlugin from './plugins/lifecyclePlugin'
-import ModulePlugin from './plugins/modulePlugin'
-import { ModuleManager } from './plugins/modulePlugin/module-manager'
+// import CommentPlugin from './plugins/comment'
+import AreaPlugin from './plugins/area'
+import DebuggerPlugin from './plugins/debugger'
+import DisplayPlugin from './plugins/display'
+import HistoryPlugin from './plugins/history'
+import InspectorPlugin from './plugins/inspector'
+import KeyCodePlugin from './plugins/keyCode'
+import LifecyclePlugin from './plugins/lifecycle'
+import ModulePlugin from './plugins/module'
+import { ModuleManager } from './plugins/module/module-manager'
 import SocketGenerator from './plugins/socketGenerator'
-import SocketOverridePlugin from './plugins/socketPlugin/socketOverridePlugin'
-import TaskPlugin, { Task } from './plugins/taskPlugin'
+import SocketOverridePlugin from './plugins/socket/socketOverridePlugin'
+import TaskPlugin, { Task } from './plugins/task'
 import { PubSubContext, ThothComponent } from './thoth-component'
-import SocketPlugin from './plugins/socketPlugin'
-// import SelectionPlugin from './plugins/selectionPlugin'
-import errorPlugin from './plugins/errorPlugin'
+import SocketPlugin from './plugins/socket'
+// import SelectionPlugin from './plugins/selection'
+import error from './plugins/error'
 
 interface ThothEngineClient extends ThothEngine {
   thoth: EditorContext
@@ -150,7 +151,7 @@ export const initEditor = function ({
     server: false,
     modules: {},
   }) as ThothEngineClient
-  engine.use(errorPlugin)
+  engine.use(error)
   engine.thoth = thoth
   // @seang TODO: update types for editor.use rather than casting as unknown here, we may want to bring our custom rete directly into the monorepo at this point
 

@@ -1,6 +1,6 @@
 import Rete from 'rete'
 
-import { DataControl } from '../plugins/inspectorPlugin'
+import { DataControl } from '../plugins/inspector'
 // eslint-disable-next-line import/no-namespace
 import * as sockets from '../sockets'
 

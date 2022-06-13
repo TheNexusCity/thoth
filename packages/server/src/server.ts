@@ -4,8 +4,11 @@ config()
 import cors from '@koa/cors'
 import Router from '@koa/router'
 // todo fix this import
-import { initClassifier } from '@latitudegames/thoth-core/src/utils/textClassifier'
+import { initClassifier } from '@thoth/core/src/utils/textClassifier'
+import * as fs from 'fs'
+import http from 'http'
 import HttpStatus from 'http-status-codes'
+import https from 'https'
 import Koa from 'koa'
 import koaBody from 'koa-body'
 import compose from 'koa-compose'
@@ -13,16 +16,12 @@ import { cacheManager } from './cacheManager'
 import { database } from './database'
 import { creatorToolsDatabase } from './databases/creatorTools'
 import { routes } from './routes'
-import { Handler, Method, Middleware } from './types'
-import { initTextToSpeech } from './systems/googleTextToSpeech'
-import { initFileServer } from './systems/fileServer'
-import https from 'https'
-import http from 'http'
-import * as fs from 'fs'
-import spawnPythonServer from './systems/pythonServer'
-import { convertToMp4 } from './systems/videoConverter'
 import { auth } from './routes/middleware/auth'
-import { initWeaviateClient, search } from './systems/weaviateClient'
+import { initFileServer } from './systems/fileServer'
+import { initTextToSpeech } from './systems/googleTextToSpeech'
+import spawnPythonServer from './systems/pythonServer'
+import { initWeaviateClient } from './systems/weaviateClient'
+import { Handler, Method, Middleware } from './types'
 
 const app: Koa = new Koa()
 const router: Router = new Router()
@@ -69,7 +68,8 @@ async function init() {
   await initTextToSpeech()
   new cacheManager()
   await initWeaviateClient(
-    process.env.WEAVIATE_IMPORT_DATA?.toLowerCase().trim() === 'true'
+    process.env.WEAVIATE_IMPORT_DATA?.toLowerCase().trim() === 'true',
+    process.env.CLASSIFIER_IMPORT_DATA?.toLowerCase().trim() === 'true'
   )
 
   if (process.env.RUN_PYTHON_SERVER === 'true') {
@@ -203,13 +203,13 @@ async function init() {
   }
   useSSL
     ? https
-        .createServer(optionSsl, app.callback())
-        .listen(PORT, '0.0.0.0', () => {
-          console.log('Https Server listening on: 0.0.0.0:' + PORT)
-        })
-    : http.createServer(app.callback()).listen(PORT, '0.0.0.0', () => {
-        console.log('Http Server listening on: 0.0.0.0:' + PORT)
+      .createServer(optionSsl, app.callback())
+      .listen(PORT, '0.0.0.0', () => {
+        console.log('Https Server listening on: 0.0.0.0:' + PORT)
       })
+    : http.createServer(app.callback()).listen(PORT, '0.0.0.0', () => {
+      console.log('Http Server listening on: 0.0.0.0:' + PORT)
+    })
   // await initLoop()
 }
 init()

@@ -1,18 +1,18 @@
-import { EngineContext } from '@latitudegames/thoth-core/dist/types'
+import { EngineContext } from '@thoth/core/dist/types'
 
 export const buildThothInterface = (): EngineContext => {
   return {
     async completion(body) {
       return 'testing'
     },
-    setCurrentGameState() {},
+    setCurrentGameState() { },
     getCurrentGameState() {
       return {}
     },
     async enkiCompletion() {
       return { outputs: [] }
     },
-    updateCurrentGameState() {},
+    updateCurrentGameState() { },
     async huggingface() {
       return {}
     },
@@ -22,6 +22,6 @@ export const buildThothInterface = (): EngineContext => {
     async readFromImageCache() {
       return { images: [] }
     },
-    processCode() {},
+    processCode() { },
   }
 }

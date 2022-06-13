@@ -1,11 +1,11 @@
 import { getComponents, components } from './src/components/components'
 import { initSharedEngine } from './src/engine'
-import { Task } from './src/plugins/taskPlugin/task'
+import { Task } from './src/plugins/task/task'
 import { ThothComponent } from './src/thoth-component'
 import SpellRunner from './src/spellManager/SpellRunner'
 
 export { getComponents } from './src/components/components'
-export { Task } from './src/plugins/taskPlugin/task'
+export { Task } from './src/plugins/task/task'
 export { initSharedEngine }
 export { SpellRunner }
 

@@ -2,9 +2,9 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "allowJs": true,
-    "module": "commonjs",
+    "module": "esnext",
     "jsx": "react-jsx",
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noUnusedLocals": true,
     "strictNullChecks": true,
     "strict": false,
@@ -16,6 +16,6 @@
     "target": "ES2021",
     "sourceMap": true
   },
-  "include": ["./"],
+  "include": ["./*.ts", "./**/*.ts", "./**/*.tsx"],
   "exclude": ["./node_modules/", "./dist/", "./test", "./data"]
 }

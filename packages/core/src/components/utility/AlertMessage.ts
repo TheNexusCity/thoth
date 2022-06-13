@@ -2,7 +2,7 @@ import Rete from 'rete'
 
 import { NodeData, ThothNode } from '../../../types'
 import { TextInputControl } from '../../controls/TextInputControl'
-import { TaskOptions } from '../../plugins/taskPlugin/task'
+import { TaskOptions } from '../../plugins/task/task'
 import { triggerSocket } from '../../sockets'
 import { ThothComponent } from '../../thoth-component'
 

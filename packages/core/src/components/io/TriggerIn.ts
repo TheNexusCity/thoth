@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { NodeData, ThothNode } from '../../../types'
 import { InputControl } from '../../dataControls/InputControl'
 import { PlaytestControl } from '../../dataControls/PlaytestControl'
-import { TaskOptions } from '../../plugins/taskPlugin/task'
+import { TaskOptions } from '../../plugins/task/task'
 import { triggerSocket } from '../../sockets'
 import { ThothComponent, ThothTask } from '../../thoth-component'
 

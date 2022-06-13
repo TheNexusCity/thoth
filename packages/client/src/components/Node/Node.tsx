@@ -1,4 +1,4 @@
-import { Node, Socket, Control } from 'rete-react-render-plugin'
+import { Node, Socket, Control } from '@thoth/core/src/plugins/reactRender';
 
 import Icon, { componentCategories } from '../Icon/Icon'
 import css from './Node.module.css'

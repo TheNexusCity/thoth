@@ -6,7 +6,7 @@ import {
   Subspell,
 } from '../../types'
 import { ThothEngine } from '../engine'
-import { Module } from '../plugins/modulePlugin/module'
+import { Module } from '../plugins/module/module'
 import { extractNodes } from './graphHelpers'
 
 type RunGraphArguments = {

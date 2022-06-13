@@ -2,7 +2,7 @@ import {
   EditorContext,
   Spell,
   ThothWorkerInputs,
-} from '@latitudegames/thoth-core/types'
+} from '@thoth/core/types'
 import { useContext, createContext, useRef, useEffect } from 'react'
 
 import { postEnkiCompletion } from '../../services/game-api/enki'
@@ -23,9 +23,9 @@ const ThothInterfaceProvider = ({ children, tab }) => {
   const [fetchFromImageCache] = useFetchFromImageCacheMutation()
   const { user } = useAuth()
   const [_runSpell] = useRunSpellMutation()
-  const { data: _spell } = useGetSpellQuery({ 
-    spellId: tab.spellId, 
-    userId: user?.id as string 
+  const { data: _spell } = useGetSpellQuery({
+    spellId: tab.spellId,
+    userId: user?.id as string
   }, {
     skip: !tab.spellId,
   })

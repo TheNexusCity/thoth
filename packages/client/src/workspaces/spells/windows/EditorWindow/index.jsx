@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { createNode } from 'rete-context-menu-plugin/src/utils'
+import { createNode } from '@thoth/core/src/plugins/contextMenu/src/utils'
 
 import WindowToolbar from '@/components/Window/WindowToolbar'
 import { Editor, useEditor } from '../../../contexts/EditorProvider'

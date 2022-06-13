@@ -2,10 +2,10 @@ import io from 'socket.io'
 import Rete, { Engine } from 'rete'
 
 import { GraphData, ModuleType, NodeData, ThothWorkerInputs } from '../types'
-import SocketPlugin from './plugins/socketPlugin'
-import debuggerPlugin from './plugins/debuggerPlugin'
-import ModulePlugin from './plugins/modulePlugin'
-import TaskPlugin, { Task } from './plugins/taskPlugin'
+import SocketPlugin from './plugins/socket'
+import debuggerPlugin from './plugins/debugger'
+import ModulePlugin from './plugins/module'
+import TaskPlugin, { Task } from './plugins/task'
 
 interface WorkerOutputs {
   [key: string]: unknown

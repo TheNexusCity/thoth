@@ -10,7 +10,7 @@ import {
 } from '../../types'
 import { getComponents } from '../components/components'
 import { extractNodes, initSharedEngine, ThothEngine } from '../engine'
-import { Module } from '../plugins/modulePlugin/module'
+import { Module } from '../plugins/module/module'
 import { extractModuleInputKeys } from '../utils/chainHelpers'
 
 type RunSpellConstructor = {

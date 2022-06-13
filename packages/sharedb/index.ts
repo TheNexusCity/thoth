@@ -1,10 +1,11 @@
-import 'regenerator-runtime'
-import { SpellRunner } from '@latitudegames/thoth-core/dist/server'
+import WebSocketJSONStream from '@teamwork/websocket-json-stream'
+import { SpellRunner } from '@thoth/core/server'
 import express from 'express'
 import http from 'http'
-import WebSocket from 'ws'
+import 'regenerator-runtime'
 import ShareDB from 'sharedb'
-import WebSocketJSONStream from '@teamwork/websocket-json-stream'
+import WebSocket from 'ws'
+
 import { buildThothInterface } from './src/thothInterface'
 
 const app = express()
@@ -13,11 +14,9 @@ const wss = new WebSocket.Server({ server: server })
 
 const backend = new ShareDB()
 
-let spellRunner
-
 wss.on('connection', webSocket => {
   const thothInterface = buildThothInterface()
-  spellRunner = new SpellRunner({ thothInterface })
+  new SpellRunner({ thothInterface })
 
   const stream = new WebSocketJSONStream(webSocket)
   backend.listen(stream)

@@ -1,4 +1,4 @@
-import { DataControl } from '../plugins/inspectorPlugin'
+import { DataControl } from '../plugins/inspector'
 export class CodeControl extends DataControl {
   constructor({ dataKey, name, icon = 'feathers' }) {
     const options = {

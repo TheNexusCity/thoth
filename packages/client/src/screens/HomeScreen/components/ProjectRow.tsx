@@ -1,4 +1,4 @@
-import { Spell } from '@latitudegames/thoth-core/types'
+import { Spell } from '@thoth/core/types'
 import { CSSProperties } from 'react'
 import Icon from '../../../components/Icon/Icon'
 import css from '../homeScreen.module.css'
@@ -16,7 +16,7 @@ type ProjectProps = {
 const ProjectRow = ({
   label,
   selectedSpell,
-  onClick = () => {},
+  onClick = () => { },
   icon = '',
   spell,
   style = {},
@@ -25,9 +25,8 @@ const ProjectRow = ({
   return (
     <div
       role="button"
-      className={`${css['project-row']} ${
-        css[selectedSpell?.name === label ? 'selected' : '']
-      }`}
+      className={`${css['project-row']} ${css[selectedSpell?.name === label ? 'selected' : '']
+        }`}
       onClick={e => {
         onClick(e)
       }}

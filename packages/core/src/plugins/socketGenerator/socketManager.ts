@@ -1,6 +1,6 @@
 import { GraphData, DataSocketType, ThothNode } from '../../../types'
 import { ThothEditor } from '../../editor'
-import { ModuleSocketType } from '../modulePlugin/module-manager'
+import { ModuleSocketType } from '../module/module-manager'
 
 export default class SocketManager {
   node: ThothNode
@@ -21,7 +21,7 @@ export default class SocketManager {
     if (!this.node.data.outputs) this.node.data.outputs = []
   }
 
-  updateSocketsFromChain(chain: GraphData) {}
+  updateSocketsFromChain(chain: GraphData) { }
 
-  regenerateSockets() {}
+  regenerateSockets() { }
 }

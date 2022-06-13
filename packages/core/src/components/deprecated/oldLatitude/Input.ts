@@ -13,7 +13,7 @@ import { TextInputControl } from '../../../controls/TextInputControl'
 import { InputControl } from '../../../dataControls/InputControl'
 import { PlaytestControl } from '../../../dataControls/PlaytestControl'
 import { SwitchControl } from '../../../dataControls/SwitchControl'
-import { Task } from '../../../plugins/taskPlugin/task'
+import { Task } from '../../../plugins/task/task'
 import { anySocket } from '../../../sockets'
 import { ThothComponent, ThothTask } from '../../../thoth-component'
 const info = `The input component allows you to pass a single value to your graph.  You can set a default value to fall back to if no value is provided at runtime.  You can also turn the input on to receive data from the playtest input.`
@@ -99,8 +99,8 @@ export class InputComponent extends ThothComponent<InputReturn> {
 
     const data = node?.data?.playtestToggle as
       | {
-          receivePlaytest: boolean
-        }
+        receivePlaytest: boolean
+      }
       | undefined
 
     const togglePlaytest = new PlaytestControl({

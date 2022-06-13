@@ -1,5 +1,5 @@
 dist
-src/plugins/areaPlugin/style.css.d.ts
+src/plugins/area/style.css.d.ts
 LICENSE
 
 .env.local

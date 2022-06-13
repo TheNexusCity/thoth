@@ -11,7 +11,7 @@ import {
   ThothWorkerOutputs,
 } from '../../../types'
 import { InputControl } from '../../dataControls/InputControl'
-import { TaskOptions } from '../../plugins/taskPlugin/task'
+import { TaskOptions } from '../../plugins/task/task'
 import { anySocket } from '../../sockets'
 import { ThothComponent } from '../../thoth-component'
 const info = `The module input component adds an input socket to the parent module.  It can be given a name, which is displayed on the parent.`

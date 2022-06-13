@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { EditorContext, NodeData, ThothNode } from '../../../../types'
 import { InputControl } from '../../../dataControls/InputControl'
-import { TaskOptions } from '../../../plugins/taskPlugin/task'
+import { TaskOptions } from '../../../plugins/task/task'
 import { triggerSocket } from '../../../sockets'
 import { ThothComponent, ThothTask } from '../../../thoth-component'
 import { PlaytestControl } from '../../../dataControls/PlaytestControl'
@@ -148,8 +148,8 @@ export class TriggerIn extends ThothComponent<void> {
 
     const data = node?.data?.playtestToggle as
       | {
-          receivePlaytest: boolean
-        }
+        receivePlaytest: boolean
+      }
       | undefined
 
     const togglePlaytest = new PlaytestControl({

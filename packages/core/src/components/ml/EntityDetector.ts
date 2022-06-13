@@ -13,7 +13,7 @@ import {
 } from '../../../types'
 import { FewshotControl } from '../../dataControls/FewshotControl'
 import { EngineContext } from '../../../types'
-import { TaskOptions } from '../../plugins/taskPlugin/task'
+import { TaskOptions } from '../../plugins/task/task'
 import { stringSocket, triggerSocket, arraySocket } from '../../sockets'
 import { ThothComponent } from '../../thoth-component'
 const fewshot = `Given an action, detect what entities the player is interacting with. Ignore entities that the player is just asking about.
@@ -119,8 +119,8 @@ export class EntityDetector extends ThothComponent<
         entities: 'output',
         trigger: 'option',
       },
-      init: () => {},
-      onRun: () => {},
+      init: () => { },
+      onRun: () => { },
     } as TaskOptions
     this.category = 'AI/ML'
     this.display = true
@@ -165,10 +165,9 @@ export class EntityDetector extends ThothComponent<
     const prompt = fewshot + action + '\nEntities:'
 
     const resp = await axios.post(
-      `${
-        process.env.REACT_APP_API_URL ??
-        process.env.API_URL ??
-        'https://localhost:8001'
+      `${process.env.REACT_APP_API_URL ??
+      process.env.API_URL ??
+      'https://localhost:8001'
       }/text_completion`,
       {
         params: {

@@ -9,7 +9,7 @@ build
 .vscode/chrome
 
 # Generated Styles for AreaPlugin
-core/src/plugins/areaPlugin/style.css.d.ts
+core/src/plugins/area/style.css.d.ts
 yarn-error.log
 server/google_credentials.json
 server/files/

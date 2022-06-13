@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { NodeData, ThothNode, ThothWorkerInputs } from '../../../types'
 import { InputControl } from '../../dataControls/InputControl'
-import { TaskOptions } from '../../plugins/taskPlugin/task'
+import { TaskOptions } from '../../plugins/task/task'
 // @seang todo: convert data controls to typescript to remove this
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore

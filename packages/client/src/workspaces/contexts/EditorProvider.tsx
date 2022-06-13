@@ -1,10 +1,10 @@
-import { initEditor } from '@latitudegames/thoth-core/src'
+import { initEditor } from '@thoth/core/src'
 import {
   GraphData,
   EditorContext,
   Spell,
-} from '@latitudegames/thoth-core/types'
-import { ThothEditor } from '@latitudegames/thoth-core/types'
+} from '@thoth/core/types'
+import { ThothEditor } from '@thoth/core/types'
 import React, {
   useRef,
   useContext,
@@ -21,7 +21,7 @@ import gridimg from '@/grid.png'
 import { usePubSub } from '../../contexts/PubSubProvider'
 import { useThothInterface } from './ThothInterfaceProvider'
 // TODO fix this path import
-import { zoomAt } from '@latitudegames/thoth-core/src/plugins/areaPlugin/zoom-at'
+import { zoomAt } from '@thoth/core/src/plugins/area/zoom-at'
 import { useAuth } from '@/contexts/AuthProvider'
 import { useFeathers } from '@/contexts/FeathersProvider'
 import { feathers } from '@/config'
@@ -38,7 +38,7 @@ export type ThothTab = {
 
 // TODO give better typing to the editor
 const Context = createContext({
-  run: () => {},
+  run: () => { },
   getEditor: (): ThothEditor | null => null,
   editor: {} as ThothEditor | null,
   serialize: (): GraphData | undefined => undefined,
@@ -48,16 +48,16 @@ const Context = createContext({
     spell: Spell | undefined,
     tab: ThothTab,
     reteInterface: EditorContext
-  ) => {},
-  setEditor: (editor: any) => {},
-  getNodeMap: () => {},
-  getNodes: () => {},
-  loadGraph: (graph: any) => {},
-  setContainer: () => {},
-  undo: () => {},
-  redo: () => {},
-  del: () => {},
-  centerNode: (nodeId: number): void => {},
+  ) => { },
+  setEditor: (editor: any) => { },
+  getNodeMap: () => { },
+  getNodes: () => { },
+  loadGraph: (graph: any) => { },
+  setContainer: () => { },
+  undo: () => { },
+  redo: () => { },
+  del: () => { },
+  centerNode: (nodeId: number): void => { },
 })
 
 export const useEditor = () => useContext(Context)
@@ -213,7 +213,7 @@ const RawEditor = ({ tab, children }) => {
         onDragOver={e => {
           e.preventDefault()
         }}
-        onDrop={e => {}}
+        onDrop={e => { }}
       >
         <div
           ref={el => {

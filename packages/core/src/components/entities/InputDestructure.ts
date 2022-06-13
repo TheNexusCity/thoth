@@ -8,7 +8,7 @@ import {
   ThothWorkerInputs,
   ThothWorkerOutputs,
 } from '../../../types'
-import { Task } from '../../plugins/taskPlugin/task'
+import { Task } from '../../plugins/task/task'
 import {
   anySocket,
   arraySocket,

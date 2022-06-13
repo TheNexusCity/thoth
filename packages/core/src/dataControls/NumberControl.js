@@ -1,5 +1,5 @@
 /* eslint-disable no-empty */
-import { DataControl } from '../plugins/inspectorPlugin'
+import { DataControl } from '../plugins/inspector'
 
 export class NumberControl extends DataControl {
   constructor({ dataKey, name, icon = 'hand' }) {

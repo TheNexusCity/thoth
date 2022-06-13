@@ -11,9 +11,9 @@ import {
   WorkerOutputs,
 } from 'rete/types/core/data'
 
-import { ThothConsole } from './src/plugins/debuggerPlugin/ThothConsole'
-import { Inspector } from './src/plugins/inspectorPlugin/Inspector'
-import { TaskOutputTypes } from './src/plugins/taskPlugin/task'
+import { ThothConsole } from './src/plugins/debugger/ThothConsole'
+import { Inspector } from './src/plugins/inspector/Inspector'
+import { TaskOutputTypes } from './src/plugins/task/task'
 import { SocketNameType, SocketType } from './src/sockets'
 import { ThothTask } from './src/thoth-component'
 
@@ -22,7 +22,7 @@ export { ThothComponent } from './src/thoth-component'
 //@seang this was causing test enviroment issues to have it shared client/server
 // export { ThothEditor } from './src/editor'
 
-export type { InspectorData } from './src/plugins/inspectorPlugin/Inspector'
+export type { InspectorData } from './src/plugins/inspector/Inspector'
 
 export type ImageType = {
   id: string
@@ -51,7 +51,7 @@ export type EngineContext = {
   huggingface: (
     model: string,
     request: string
-  ) => Promise<{ error?: unknown; [key: string]: unknown }>
+  ) => Promise<{ error?: unknown;[key: string]: unknown }>
   runSpell: (
     flattenedInputs: Record<string, any>,
     spellId: string,
@@ -134,7 +134,7 @@ export type DataSocketType = {
 export type ThothNode = Node & {
   inspector: Inspector
   display: (content: string) => void
-  outputs: { name: string; [key: string]: unknown }[]
+  outputs: { name: string;[key: string]: unknown }[]
   category?: string
   deprecated?: boolean
   displayName?: string
@@ -269,9 +269,9 @@ export type WorkerReturn =
   | Promise<never[] | { entities: { name: string; type: string }[] }>
   | Promise<{ element: unknown } | undefined>
   | Promise<
-      | { result: { error: unknown; [key: string]: unknown } }
-      | { result?: undefined }
-    >
+    | { result: { error: unknown;[key: string]: unknown } }
+    | { result?: undefined }
+  >
   | Promise<{ text: unknown }>
   | Promise<{ boolean: boolean }>
   | Promise<null | undefined>
@@ -292,11 +292,11 @@ export type ThothWorker = (
 
 export interface PubSubBase
   extends CountSubscriptions,
-    ClearAllSubscriptions,
-    GetSubscriptions,
-    Publish,
-    Subscribe,
-    Unsubscribe {
+  ClearAllSubscriptions,
+  GetSubscriptions,
+  Publish,
+  Subscribe,
+  Unsubscribe {
   name: string
   version: string
 }

@@ -4,4 +4,4 @@
 # echo $result
 # exit
 
-ts-node ../server/src/utils/seed/seeding.ts
+ts-node ../packages/server/src/utils/seed/seeding.ts
