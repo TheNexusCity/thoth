@@ -851,6 +851,11 @@ const addVideo = async (ctx: Koa.Context) => {
       videoPath,
       path.join(process.cwd(), `/files/videos/${name}`)
     )
+
+    const {title, desc, meta, keyword } = this.processVideoForDetails(name);
+    const video = database.instance.saveVideoDetails(
+        title, desc, meta, keyword
+    )
     return (ctx.body = 'ok')
   } catch (e) {
     ctx.status = 500
@@ -861,6 +866,14 @@ const addVideo = async (ctx: Koa.Context) => {
 const post_pipedream = async (ctx: Koa.Context) => {
   console.log('testPipeDream:', ctx.request)
   return (ctx.body = 'ok')
+}
+
+export const processVideoForDetails = (name: string) => {
+  const title = name.substring(0, 10);
+  const description = name;
+  const meta = name;
+  const keywords = name;
+  return { title, description, meta, keywords };
 }
 
 const getMessageReactions = async (ctx: Koa.Context) => {

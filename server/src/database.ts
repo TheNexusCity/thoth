@@ -366,7 +366,7 @@ export class database {
       throw new Error(e)
     }
   }
-  
+
   async updateGreeting(enabled: boolean, sendIn: string, channelId: string, message: string, id: string) {
     const query = 'UPDATE greetings SET enabled = $1, send_in = $2, channel_id = $3, message = $4 WHERE id = $5'
     const values = [enabled, sendIn, channelId, message, id]
@@ -1533,6 +1533,38 @@ export class database {
     const values = [id]
     try {
       return await this.client.query(query, values)
+    } catch (e) {
+      throw new Error(e)
+    }
+  }
+
+  async saveVideoDetails(
+      id: string,
+      title: string,
+      desc: string,
+      meta: string,
+      keywords: string
+  ) {
+    const cQuery = 'INSERT INTO video_detail (title, description, metaDesc, keywords) VALUES ($1, $2, $3, $4)';
+    const values = [title, desc, meta, keywords];
+    try {
+      return await this.client.query(cQuery, values)
+    } catch (e) {
+      throw new Error(e)
+    }
+  }
+
+  async updateVideoDetails(
+      id: string,
+      title: string,
+      desc: string,
+      meta: string,
+      keywords: string
+  ){
+    const uQuery = 'UPDATE video_detail set title=$2, description=$3, metaDesc=$4, keywords=$5 WHERE id=$1'
+    const values = [id, title, desc, meta, keywords]
+    try {
+      return await this.client.query(uQuery, values)
     } catch (e) {
       throw new Error(e)
     }
