@@ -112,7 +112,7 @@ const EventModal = ({
       <p>
         Date: <b>{event.date}</b> Time: <b>{event.time}</b>
       </p>
-      <p>{event.moreInfo}</p>
+      {/* <p>{event.moreInfo}</p> */}
 
       <button
         className="calendarBtn"
@@ -432,45 +432,68 @@ export const CalendarApp = () => {
       })
   }
 
+  const syncEvents = () => {
+    setIsLoading(true)
+    axios
+      .get(`${process.env.REACT_APP_API_ROOT_URL}/calendar_event/sync`)
+      .then(res => {
+        setIsLoading(false)
+        fetchEvents()
+        enqueueSnackbar('Sync successful', { variant: 'success' })
+      })
+      .catch(err => {
+        setIsLoading(false)
+        console.log('Error syncing events :: ', err);
+        enqueueSnackbar('Synchronization not successful', { variant: 'error' })
+      })
+  }
+
   return (
-    <div className="calendar-UI">
-      {isLoading && <Loader />}
+    <div className='agent-editor'>
+      <div className="entBtns" style={{ marginBottom: '1rem' }}>
+        <button onClick={syncEvents}>
+          Sync
+        </button>
+      </div>
+      <div className="calendar-UI">
+        {isLoading && <Loader />}
 
-      <Navigation
-        date={date}
-        setDate={setDate}
-        setShowingEventForm={setShowingEventForm}
-      />
+        <Navigation
+          date={date}
+          setDate={setDate}
+          setShowingEventForm={setShowingEventForm}
+        />
 
-      <DayLabels />
+        <DayLabels />
 
-      <Grid
-        date={date}
-        events={events}
-        setShowingEventForm={setShowingEventForm}
-        setViewingEvent={setViewingEvent}
-        actualDate={date}
-      />
-
-      {viewingEvent && (
-        <EventModal
-          event={viewingEvent}
+        <Grid
+          date={date}
+          events={events}
           setShowingEventForm={setShowingEventForm}
           setViewingEvent={setViewingEvent}
-          deleteEvent={deleteEvent}
+          actualDate={date}
         />
-      )}
 
-      {showingEventForm && showingEventForm.visible && (
-        <EventForm
-          withEvent={showingEventForm.withEvent}
-          preselectedDate={showingEventForm.withEvent}
-          setShowingEventForm={setShowingEventForm}
-          addEvent={addEvent}
-          editEvent={editEvent}
-          setViewingEvent={setViewingEvent}
-        />
-      )}
+        {viewingEvent && (
+          <EventModal
+            event={viewingEvent}
+            setShowingEventForm={setShowingEventForm}
+            setViewingEvent={setViewingEvent}
+            deleteEvent={deleteEvent}
+          />
+        )}
+
+        {showingEventForm && showingEventForm.visible && (
+          <EventForm
+            withEvent={showingEventForm.withEvent}
+            preselectedDate={showingEventForm.withEvent}
+            setShowingEventForm={setShowingEventForm}
+            addEvent={addEvent}
+            editEvent={editEvent}
+            setViewingEvent={setViewingEvent}
+          />
+        )}
+      </div>
     </div>
   )
 }

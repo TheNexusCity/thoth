@@ -8,10 +8,14 @@ import path from 'path'
 import DiscordClient from './discord'
 
 import { getRelativeDate, isValidArray } from '../../utils/utils'
+import { database } from '../../database'
 
 const discord_client = new DiscordClient()
 
 const { sendMessageToChannel } = discord_client
+
+const CURRENT_SYNC_TOKEN_KEY = 'currentSyncToken'
+const NEXT_SYNC_TOKEN_KEY = 'nextSyncToken'
 
 export const testData = {
   summary: 'Google I/O 2015',
@@ -63,7 +67,7 @@ export const initCalendar = async () => {
  * @param {function} callback The callback to call with the authorized client.
  */
 export const authorize = async (credentials: object, callback?: function) => {
-  const { client_secret, client_id, redirect_uris } = credentials.installed
+  const { client_secret, client_id, redirect_uris } = credentials.web
   const oAuth2Client = new google.auth.OAuth2(
     client_id,
     client_secret,
@@ -117,27 +121,82 @@ export const addCalendarEvent = async (
         console.log('There was an error contacting the Calendar service:', err)
         return resolve(null)
       }
-
-      try {
-        const config: any = await database.instance.getConfig()
-        const channle_name: string = config['discord_calendar_channel']
-
-        sendMessageToChannel(
-          channle_name,
-          res.summary + ' has been added to your calendar'
-        )
-      } catch (error) {
-        console.log(error)
-        resolve(null)
-      }
-
       resolve(res)
     }
   })
 }
 
 /**
- * Lists the next 10 events on the user's primary calendar.
+ * Sync events from Google Calendar
+ * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
+ */
+export const syncCalendarEvents = async (auth: google.auth.OAuth2) => {
+  return await new Promise(async (resolve, reject) => {
+    if (!auth) return console.log('Missing Token')
+
+    const calendar = google.calendar({ version: 'v3', auth })
+    
+    const { 
+      id: currentTokenId, 
+      value: currentToken 
+    } = await database.instance.getConfigurationSettingByName(CURRENT_SYNC_TOKEN_KEY)
+    const {
+      id: nextTokenId,
+      value: nextToken
+    } = await database.instance.getConfigurationSettingByName(NEXT_SYNC_TOKEN_KEY)
+    
+    calendar.events.list(
+      {
+        calendarId: 'primary',
+        syncToken: currentToken 
+      },
+      async (err, res) => {
+        if (err) {
+          console.log('The API returned an error: ' + err)
+          resolve(null)
+        }
+        if(res.nextSyncToken) {
+          await editSyncToken(
+            currentTokenId,
+            CURRENT_SYNC_TOKEN_KEY,
+            nextToken
+          )
+          await editSyncToken(
+            nextTokenId,
+            NEXT_SYNC_TOKEN_KEY,
+            res.nextSyncToken
+          )
+        }
+        const eventsList = res.items
+        
+        if (isValidArray(eventsList)) {
+          await eventsList
+            .filter(e => e.status !== 'cancelled')
+            .map(async (event) => {
+              try {
+                const [date, time] = event.start.dateTime.split('T')
+                await database.instance.createCalendarEvent(
+                  event.summary,
+                  'primary',
+                  date,
+                  time,
+                  event.eventType,
+                  JSON.stringify(event)
+                )
+              } catch (err) {
+                console.log('Error creating event :: ', err)
+              }
+            })         
+          resolve(true)
+        }
+        resolve(null)
+      }
+    )
+  })
+}
+
+/**
+ * Lists the events on the user's primary calendar.
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
 export const getCalendarEvents = async (auth: google.auth.OAuth2) => {
@@ -150,20 +209,37 @@ export const getCalendarEvents = async (auth: google.auth.OAuth2) => {
       {
         calendarId: 'primary',
         timeMin: new Date().toISOString(),
-        maxResults: 10,
         singleEvents: true,
-        orderBy: 'startTime',
       },
       async (err, res) => {
         if (err) {
           console.log('The API returned an error: ' + err)
-          resolve(null)
+          reject(null)
         }
-
+        if(res.nextSyncToken) {
+          const { currentToken, nextToken } = await fetchSyncTokens()
+          if(!currentToken && !nextToken) {
+            await addSyncToken(CURRENT_SYNC_TOKEN_KEY, res.nextSyncToken)
+            await addSyncToken(NEXT_SYNC_TOKEN_KEY, res.nextSyncToken)
+          }
+          if(currentToken && nextToken) {
+           await editSyncToken(
+            currentToken.id,
+            CURRENT_SYNC_TOKEN_KEY,
+            nextToken.value
+           )
+           await editSyncToken(
+            nextToken.id,
+            NEXT_SYNC_TOKEN_KEY,
+            res.nextSyncToken
+           )
+          }
+        }
         const eventsList = res.items
 
         if (isValidArray(eventsList)) {
           const updatedEvent = await eventsList
+            .filter(e => e.status !== 'cancelled')
             .map((event, i) => {
               const eventDate = new Date(
                 event.start.dateTime || event.start.date
@@ -201,10 +277,10 @@ export const getCalendarEvents = async (auth: google.auth.OAuth2) => {
 }
 
 /**
- * Lists the next 10 events on the user's primary calendar.
- * @param {google.auth.OAuth2, eventId} auth  An authorized OAuth2 client.
+ * Delete an event from the user's primary calendar
+ * @param {google.auth.OAuth2} auth  An authorized OAuth2 client.
+ * @param {string} eventId  ID of the Event
  */
-
 export const deleteCalendarEvent = async (
   auth: google.auth.OAuth2,
   eventId: string
@@ -217,25 +293,52 @@ export const deleteCalendarEvent = async (
     return await calendar.events.delete(
       {
         calendarId: 'primary',
-        eventId: eventId,
+        eventId,
       },
       async (err, res) => {
         if (err) {
           console.log('The API returned an error: ' + err)
           resolve(null)
         }
-
-        try {
-          const config: any = await database.instance.getConfig()
-          const channle_name: string = config['discord_calendar_channel']
-          sendMessageToChannel(channle_name, 'Event deleted')
-        } catch (error) {
-          console.log(error)
-          resolve(null)
-        }
-
         resolve(true)
       }
     )
   })
+}
+
+/**
+ * Fetch current sync token and next sync token from database
+ */
+const fetchSyncTokens = async () => {
+  const currentToken = await database.instance.getConfigurationSettingByName(CURRENT_SYNC_TOKEN_KEY)
+  const nextToken = await database.instance.getConfigurationSettingByName(NEXT_SYNC_TOKEN_KEY)
+  return {
+    currentToken: {
+      id: currentToken.id,
+      value: currentToken.value
+    },
+    nextToken: {
+      id: nextToken.id,
+      value: nextToken.value
+    }
+  }
+}
+
+/**
+ * Add sync token in database
+ * @param {string} key Key of the token
+ * @param {string} value Value of the token
+ */
+const addSyncToken = async (key: string, value: string) => {
+  return database.instance.addConfigurationSetting({ key, value })
+}
+
+/**
+ * Edit sync token in database
+ * @param {string} id ID of the token
+ * @param {string} key Key of the token
+ * @param {string} value Value of the token
+ */
+const editSyncToken = async (id: string, key: string, value: string) => {
+  return database.instance.editConfigurationSetting({ id, key, value }, id)
 }

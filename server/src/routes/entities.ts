@@ -19,6 +19,8 @@ import {
   initCalendar,
   addCalendarEvent,
   deleteCalendarEvent,
+  getCalendarEvents,
+  syncCalendarEvents
 } from '../../src/entities/connectors/calendar'
 import { isValidArray, isValidObject } from '../../src/utils/utils'
 import fs from 'fs'
@@ -636,34 +638,16 @@ const zoomBufferChunk = async (ctx: Koa.Context) => {
   return (ctx.body = 'ok')
 }
 
-const getCalendarEvents = async (ctx: Koa.Context) => {
+const _getCalendarEvents = async (ctx: Koa.Context) => {
   try {
+    const content = await initCalendar()
+    const auth = await authorize(content)
+    await getCalendarEvents(auth)
     let calendarEvents = await database.instance.getCalendarEvents()
     return (ctx.body = calendarEvents)
   } catch (e) {
     ctx.status = 500
     return (ctx.body = { error: 'internal error' })
-  }
-}
-const addCalendarEvent = async (ctx: Koa.Context) => {
-  const name = ctx.request.body.name
-  const date = ctx.request.body.date
-  const time = ctx.request.body.time
-  const type = ctx.request.body.type
-  const moreInfo = ctx.request.body.moreInfo
-
-  try {
-    await database.instance.createCalendarEvent(
-      name,
-      date,
-      time,
-      type,
-      moreInfo
-    )
-    return (ctx.body = 'inserted')
-  } catch (e) {
-    ctx.status = 500
-    return (ctx.body = { payload: [], message: 'internal error' })
   }
 }
 
@@ -673,7 +657,6 @@ const addCalendarEvent = async (ctx: Koa.Context) => {
  * @param {string} name - calendar event summary name
  * @param {string} moreInfo - calendar event description name
  */
-
 const addCalendarEvents = async (ctx: Koa.Context) => {
   const { name, date, time, type, moreInfo } = ctx.request.body
   if (
@@ -695,8 +678,9 @@ const addCalendarEvents = async (ctx: Koa.Context) => {
     const content = await initCalendar()
     const auth = await authorize(content)
 
-    const currentTime = new Date(Number(time)).getHours()
-    const givenTime = new Date(Number(time)).getHours() + 1
+    const today = new Date().toISOString().split('T')[0]
+    const currentTime = new Date(`${today} ${time}:00`).getHours()
+    const givenTime = new Date(`${today} ${time}:00`).getHours() + 1
     const currentDate = new Date().getDate()
     const givenDate = new Date(date).getDate()
 
@@ -718,11 +702,11 @@ const addCalendarEvents = async (ctx: Koa.Context) => {
     }
 
     let startDateTime: Date = new Date()
-    startDateTime.setDate(currentDate)
+    startDateTime.setDate(givenDate)
     startDateTime.setHours(currentTime)
 
     let endDateTime: Date = new Date()
-    endDateTime.setDate(currentDate)
+    endDateTime.setDate(givenDate)
     endDateTime.setHours(givenTime)
 
     const addEvenetRes = await addCalendarEvent(auth, {
@@ -791,6 +775,18 @@ const addCalendarEvents = async (ctx: Koa.Context) => {
   }
 }
 
+const _syncCalendarEvents = async (ctx: Koa.Context) => {
+  try {
+    const content = await initCalendar()
+    const auth = await authorize(content)
+    await syncCalendarEvents(auth)
+    return (ctx.body = 'ok') 
+  } catch (error) {
+    console.log('error ::: ', error);
+    return (ctx.body = { error: 'internal error' })
+  }
+}
+
 const editCalendarEvent = async (ctx: Koa.Context) => {
   const id = ctx.params.id
   const name = ctx.request.body.name
@@ -824,8 +820,9 @@ const deleteCalendarEvents = async (ctx: Koa.Context) => {
     const res = await database.instance.deleteCalendarEvent(id)
 
     if (isValidArray(res)) {
-      const { calendar_id } = res[0]
-      const response = await deleteCalendarEvent(auth, calendar_id)
+      const { moreInfo } = res[0]
+      const { id } = JSON.parse(moreInfo)
+      const response = await deleteCalendarEvent(auth, id)
       if (response)
         return (ctx.body = {
           message: 'calendar deleted successfully!',
@@ -985,8 +982,13 @@ export const entities: Route[] = [
   {
     path: '/calendar_event',
     access: noAuth,
-    get: getCalendarEvents,
+    get: _getCalendarEvents,
     post: addCalendarEvents,
+  },
+  {
+    path: '/calendar_event/sync',
+    access: noAuth,
+    get: _syncCalendarEvents,
   },
   {
     path: '/calendar_event/:id',

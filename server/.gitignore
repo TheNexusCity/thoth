@@ -16,6 +16,7 @@ coverage
 # Snyk
 .dccache
 google_credentials.json
+credentials
 
 .env.local
 .env.*.local
