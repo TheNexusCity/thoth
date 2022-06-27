@@ -195,6 +195,7 @@ async function init() {
   var optionSsl = {
     key: useSSL ? fs.readFileSync('certs/key.pem') : '',
     cert: useSSL ? fs.readFileSync('certs/cert.pem') : '',
+    rejectUnauthorized: false
   }
   useSSL
     ? https

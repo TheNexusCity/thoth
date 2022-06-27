@@ -4,6 +4,8 @@
 /* eslint-disable no-console */
 /* eslint-disable require-await */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 import axios from 'axios'
 import Rete from 'rete'
 
@@ -143,9 +145,10 @@ export class AgentTextCompletion extends ThothComponent<Promise<WorkerReturn>> {
     console.log('filteredStop is', filteredStop)
 
     const resp = await axios.post(
-      `${process.env.REACT_APP_API_URL ??
-      process.env.API_URL ??
-      'https://localhost:8001'
+      `${
+        process.env.REACT_APP_API_URL ??
+        process.env.API_URL ??
+        'http://localhost:8001'
       }/text_completion`,
       {
         prompt: prompt,
@@ -156,7 +159,7 @@ export class AgentTextCompletion extends ThothComponent<Promise<WorkerReturn>> {
         frequencyPenalty: frequencyPenalty,
         presencePenalty: presencePenalty,
         stop: filteredStop,
-      }
+      },
     )
     console.log('resp.data is ', resp.data)
 
@@ -173,6 +176,7 @@ export class AgentTextCompletion extends ThothComponent<Promise<WorkerReturn>> {
         : 'Sorry, I had an error!'
 
     console.log('success:', success, 'choice:', choice.text, 'res:', res)
+    if (!silent) node.display(`${JSON.stringify(res)}`)
 
     return {
       output: res,

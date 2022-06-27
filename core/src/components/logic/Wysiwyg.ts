@@ -11,7 +11,6 @@ import {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import { InputControl } from '../../dataControls/InputControl'
-import { SocketGeneratorControl } from '../../dataControls/SocketGenerator'
 import { WysiwygControl } from '../../dataControls/WysiwygControl'
 import { triggerSocket } from '../../sockets'
 import { ThothComponent } from '../../thoth-component'

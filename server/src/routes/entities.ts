@@ -165,8 +165,16 @@ const addGreetings = async (ctx: Koa.Context) => {
     const { enabled, sendIn, channelId, message } = ctx.request.body
     const { id } = ctx.params
 
-    if(!id) await database.instance.addGreeting(enabled, sendIn, channelId, message)
-    else await database.instance.updateGreeting(enabled, sendIn, channelId, message, id)
+    if (!id)
+      await database.instance.addGreeting(enabled, sendIn, channelId, message)
+    else
+      await database.instance.updateGreeting(
+        enabled,
+        sendIn,
+        channelId,
+        message,
+        id
+      )
 
     return (ctx.body = 'ok')
   } catch (e) {
@@ -461,6 +469,7 @@ const textCompletion = async (ctx: Koa.Context) => {
     }
   }
 
+  console.log('prompt:', prompt)
   const { success, choice } = await makeCompletion(modelName, {
     prompt: prompt,
     temperature: temperature,
@@ -471,6 +480,7 @@ const textCompletion = async (ctx: Koa.Context) => {
     stop: stop,
   })
 
+  console.log('success:', success, 'choice:', choice)
   return (ctx.body = { success, choice })
 }
 

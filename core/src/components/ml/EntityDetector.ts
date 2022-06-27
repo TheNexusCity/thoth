@@ -1,3 +1,5 @@
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -12,9 +14,9 @@ import {
   ThothWorkerOutputs,
 } from '../../../types'
 import { FewshotControl } from '../../dataControls/FewshotControl'
+import { TaskOptions } from '../../plugins/taskPlugin/task';
 import { stringSocket, triggerSocket, arraySocket } from '../../sockets'
 import { ThothComponent } from '../../thoth-component'
-import { TaskOptions } from '../plugins/../taskPlugin/task'
 const fewshot = `Given an action, detect what entities the player is interacting with. Ignore entities that the player is just asking about.
 Entity types: food, person, creature, object, place, other, none
 Action: throw an anvil at the man
