@@ -18,6 +18,6 @@ server/files/
 yarn.lock
 package-lock.json
 .idea
-
+.env 
 .env.local
 .env.*.local
