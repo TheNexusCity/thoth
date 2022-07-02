@@ -805,23 +805,26 @@ const addVideo = async (ctx: Koa.Context) => {
 
         let reqData = JSON.parse(ctx.request.body.data)
 
-        let respose =  await database.instance.saveVideoDetails(
+        if (type !== 'video') {
+            ctx.response.status = 400
+            return (ctx.body = 'Only video can be uploaded')
+        }
+        const response =  await database.instance.saveVideoDetails(
             reqData.title,
             reqData.description,
             reqData.metaDesc,
             reqData.keywords
         )
-
-        if (type !== 'video') {
-            ctx.response.status = 400
-            return (ctx.body = 'Only video can be uploaded')
-        }
-
         fs.copyFileSync(
             videoPath,
             path.join(process.cwd(), `/files/videos/${name}`)
         )
-        return (ctx.body = 'ok')
+        if(respose.id){
+            return (ctx.body = 'ok')
+        } else {
+            ctx.status = '500'
+            return (ctx.body = { error: 'internal error' })
+        }
     } catch (e) {
         console.log('Errror =>', e)
         ctx.status = 500

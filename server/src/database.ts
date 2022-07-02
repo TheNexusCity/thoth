@@ -1,4 +1,4 @@
-saveVideoDetails/* eslint-disable no-console */
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable require-await */
 /* eslint-disable no-empty */
@@ -1539,7 +1539,6 @@ export class database {
   }
 
   async saveVideoDetails(
-      id: string,
       title: string,
       desc: string,
       meta: string,

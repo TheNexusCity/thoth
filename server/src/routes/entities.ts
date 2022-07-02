@@ -861,7 +861,6 @@ const addVideo = async (ctx: Koa.Context) => {
       videoPath,
       path.join(process.cwd(), `/files/videos/${name}`)
     )
-
     const {title, desc, meta, keyword } = this.processVideoForDetails(name);
     const video = database.instance.saveVideoDetails(
         title, desc, meta, keyword
