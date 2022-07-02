@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+saveVideoDetails/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable require-await */
 /* eslint-disable no-empty */

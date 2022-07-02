@@ -5,6 +5,8 @@ import type { spellsAttributes, spellsCreationAttributes } from './spells'
 import { spells as _spells } from './spells'
 import type { eventsAttributes, eventsCreationAttributes } from './events'
 import { events as _events } from './events'
+import {videoDetail as _videoDetail} from "./videoDetail"
+import {videoAttributes} from "./videoDetail"
 import type {
   deployedSpellsAttributes,
   deployedSpellsCreationAttributes,
@@ -50,11 +52,6 @@ import type {
   authUsersAttributesCreationAttributes,
 } from './authUsers'
 import { authUsers as _authUsers } from './authUsers'
-import type {
-  greetingsAttributes,
-  greetingsCreationAttributes,
-} from './greetings'
-import { greetings as _greetings } from './greetings'
 import {
   message_reactions as _message_reactions,
   messageReactionsAttributes,
@@ -64,6 +61,7 @@ import {
 export {
   _entities as entities,
   _spells as spells,
+  _videoDetail as video_detail,
   _events as events,
   _deployedSpells as deployedSpells,
   _documents as documents,
@@ -74,7 +72,6 @@ export {
   _scopeSettings as scopeSettings,
   _calendarEvents as calendarEvents,
   _authUsers as authUsers,
-  _greetings as greetings,
   _message_reactions as messageReactions,
 }
 
@@ -84,6 +81,7 @@ export type {
   spellsAttributes,
   spellsCreationAttributes,
   eventsAttributes,
+  videoAttributes,
   eventsCreationAttributes,
   deployedSpellsAttributes,
   deployedSpellsCreationAttributes,
@@ -102,14 +100,11 @@ export type {
   calendarEventsAttributes,
   calendarEventsCreationAttributes,
   authUsersAttributes,
-  greetingsAttributes,
-  greetingsCreationAttributes,
   messageReactionsAttributes,
   messageReactionCreationAttributes,
 }
 
 export function initModels(sequelize: Sequelize) {
-  const greetings = _greetings.initModel(sequelize)
   const entities = _entities.initModel(sequelize)
   const spells = _spells.initModel(sequelize)
   const events = _events.initModel(sequelize)
@@ -123,6 +118,7 @@ export function initModels(sequelize: Sequelize) {
   const calendarEvents = _calendarEvents.initModel(sequelize)
   const authUsers = _authUsers.initModel(sequelize)
   const messageReactions = _message_reactions.initModel(sequelize)
+  const video_detail = _videoDetail.initModel(sequelize)
 
   return {
     entities: entities,
@@ -137,7 +133,7 @@ export function initModels(sequelize: Sequelize) {
     scopeSettings: scopeSettings,
     calendarEvents: calendarEvents,
     authUsers: authUsers,
-    greetings,
     messageReactions,
+    video_detail: video_detail
   }
 }
