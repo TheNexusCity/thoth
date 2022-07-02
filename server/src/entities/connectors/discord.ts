@@ -176,11 +176,11 @@ export class discord_client {
       const data = content.split(' ')
       for (let i = 0; i < data.length; i++) {
         if (
-          data[i].startsWith('<@!') &&
+          data[i].startsWith('<@') &&
           data[i].charAt(data[i].length - 1) === '>'
         ) {
           try {
-            const x = data[i].replace('<@!', '').replace('>', '')
+            const x = data[i].replace('<@', '').replace('>', '')
             const user = await this.client.users.cache.find(
               (user: { id: any }) => user.id == x
             )
@@ -314,7 +314,7 @@ export class discord_client {
       return
     }
     //checks if the message contains a direct mention to the bot, or if it is a DM, or if it mentions someone else
-    const botMention = `<@!${client.user}>`
+    const botMention = `<@${client.user.id}>`
     const isDM = channel.type === channelTypes['dm']
     const isMention =
       (channel.type === channelTypes['text'] && mentions.has(client.user)) ||
@@ -428,7 +428,7 @@ export class discord_client {
     //if the message contains join word, it makes the bot to try to join a voice channel and listen to the users
     if (content.startsWith('!ping')) {
       this.sentMessage(author.id)
-      const mention = `<@!${client.user.id}>`
+      const mention = `<@${client.user.id}>`
       if (
         content.startsWith('!ping join') ||
         content.startsWith('!join') ||
@@ -464,13 +464,11 @@ export class discord_client {
     // Set flag to true to skip using prefix if mentioning or DMing us
     const prefixOptionalWhenMentionOrDM =
       this.client.prefixOptionalWhenMentionOrDM
-
-    const msgStartsWithMention = content.startsWith(botMention)
-
+    const msgStartsWithMention = message.content.startsWith(botMention)
     const messageContent =
       isMention && msgStartsWithMention
-        ? content.replace(botMention, '').trim()
-        : content
+        ? message.content.replace(botMention, '').trim()
+        : message.content
 
     const containsPrefix = messageContent.indexOf(this.client.prefix) === 0
 
@@ -504,7 +502,7 @@ export class discord_client {
     }
 
     const response = await this.handleInput(
-      message.content,
+      messageContent,
       message.author.username,
       this.discord_bot_name,
       'discord',
