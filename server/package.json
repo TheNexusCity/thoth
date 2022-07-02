@@ -10,7 +10,7 @@
     "build": "yarn clean && tsc",
     "coverage": "jest --coverage --silent",
     "clean": "rm -rf dist",
-    "dev": "concurrently \"nodemon src/server.ts\" \"yarn run speech\" \"sleep 1 && yarn run search\" \"sleep 2 && yarn run entity-server\" \"sleep 10 && yarn run seed\"",
+    "dev": "concurrently \"nodemon src/server.ts\" \"yarn run speech\" \"sleep 1 && yarn run search\" \"sleep 2 && yarn run entity-server\" \"sleep 12 && yarn run seed\" \"sleep 15 && yarn run huginn\"",
     "speech": "nodemon src/speech-server.ts",
     "search": "nodemon src/search-server.ts",
     "entity-server": "nodemon src/entity-server.ts",
@@ -30,7 +30,8 @@
     "test:full": "jest --clearCache && jest --coverage",
     "tsc:noEmit": "tsc --noEmit",
     "test:watch": "jest --watch --silent",
-    "seed": "sh ../scripts/seed_dev.sh"
+    "seed": "sh ../scripts/seed_dev.sh",
+    "huginn": "sh ../scripts/huginn_start.sh"
   },
   "dependencies": {
     "@google-cloud/speech": "^4.10.0",

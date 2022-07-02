@@ -69,18 +69,24 @@ export class Entity {
       spell: spell_handler,
       version: spell_version,
     })
-    const updateSpellHandler = spell_handler_update ? await CreateSpellHandler({
-      spell: spell_handler_update,
-      version: spell_version
-    }) : null
-    const metadataSpellHandler = spell_handler_metadata ? await CreateSpellHandler({
-      spell: spell_handler_metadata,
-      version: spell_version
-    }) : null
-    const slashCommandSpellHandler = spell_handler_slash_command ? await CreateSpellHandler({
-      spell: spell_handler_slash_command,
-      version: spell_version
-    }) : null
+    const updateSpellHandler = spell_handler_update
+      ? await CreateSpellHandler({
+          spell: spell_handler_update,
+          version: spell_version,
+        })
+      : null
+    const metadataSpellHandler = spell_handler_metadata
+      ? await CreateSpellHandler({
+          spell: spell_handler_metadata,
+          version: spell_version,
+        })
+      : null
+    const slashCommandSpellHandler = spell_handler_slash_command
+      ? await CreateSpellHandler({
+          spell: spell_handler_slash_command,
+          version: spell_version,
+        })
+      : null
     this.discord = new discord_client()
     console.log('createDiscordClient')
     await this.discord.createDiscordClient(
@@ -300,6 +306,9 @@ export class Entity {
     zoom_password: string,
     zoom_bot_name: string,
     zoom_spell_handler_incoming: string,
+    voice_provider: string,
+    voice_character: string,
+    voice_language_code: string,
     spell_version: string,
     entity: any
   ) {
@@ -320,6 +329,9 @@ export class Entity {
         zoom_password,
         zoom_bot_name,
         zoom_spell_handler_incoming,
+        voice_provider,
+        voice_character,
+        voice_language_code,
       },
       entity
     )
@@ -617,7 +629,11 @@ export class Entity {
   }
 
   constructor(data: any, port: number) {
-    this.init(data, port)
+    try {
+      this.init(data, port)
+    } catch (e) {
+      console.log('Error in initializing entity:', data, 'error:', e)
+    }
   }
 
   async init(data: any, port: number) {
@@ -793,6 +809,9 @@ export class Entity {
         data.zoom_password,
         data.zoom_bot_name,
         data.zoom_spell_handler_incoming,
+        data.voice_provider,
+        data.voice_character,
+        data.voice_language_code,
         data.spell_version,
         data
       )

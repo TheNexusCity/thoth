@@ -27,6 +27,8 @@ import {
 } from './utils'
 import { removeEmojisFromString } from '../../utils/utils'
 import { cacheManager } from '../../cacheManager'
+import { getAudioUrl } from '../../routes/getAudioUrl'
+import { tts_tiktalknet } from '../../systems/tiktalknet'
 
 function isUrl(url: string): boolean {
   if (!url || url === undefined || url.length <= 0 || !url.startsWith('http'))
@@ -535,14 +537,29 @@ export class xrengine_client {
           response = cache
           console.log('got from cache:', cache)
         } else {
-          const fileId = await tts(response as string)
-          const url =
-            (process.env.FILE_SERVER_URL?.endsWith('/')
-              ? process.env.FILE_SERVER_URL
-              : process.env.FILE_SERVER_URL + '/') + fileId
-
-          console.log('url:', url)
-          response = url
+          if (this.settings.voice_provider === 'google') {
+            const fileId = await tts(response as string)
+            const url =
+              (process.env.FILE_SERVER_URL?.endsWith('/')
+                ? process.env.FILE_SERVER_URL
+                : process.env.FILE_SERVER_URL + '/') + fileId
+            response = url
+          } else if (this.settings.voice_provider === 'uberduck') {
+            const url = await getAudioUrl(
+              process.env.UBER_DUCK_KEY as string,
+              process.env.UBER_DUCK_SECRET_KEY as string,
+              voiceCharacter,
+              response as string
+            )
+            response = url
+          } else {
+            const fileId = await tts_tiktalknet(response, voiceCharacter)
+            const url =
+              (process.env.FILE_SERVER_URL?.endsWith('/')
+                ? process.env.FILE_SERVER_URL
+                : process.env.FILE_SERVER_URL + '/') + fileId
+            response = url
+          }
         }
         await this.xrengineBot.delay(1000)
         await this.xrengineBot.sendMessage('!voiceUrl|' + response)
@@ -596,71 +613,75 @@ export class xrengine_client {
   settings
 
   async createXREngineClient(agent, settings, cli, handleInput) {
-    console.log('createXREngineClient', agent)
-    this.agent = agent
-    this.settings = settings
-    this.entity = settings.entity
-    this.handleInput = handleInput
+    try {
+      console.log('createXREngineClient', agent)
+      this.agent = agent
+      this.settings = settings
+      this.entity = settings.entity
+      this.handleInput = handleInput
 
-    let temp = this.settings.xrengine_starting_words
-    if (temp && temp !== undefined) {
-      temp = temp.split(',')
-    } else {
-      temp = ['hi', 'hey']
-    }
-    this.settings.xrengine_starting_words = []
-    for (let i = 0; i < temp.length; i++) {
-      this.settings.xrengine_starting_words.push(temp[i].toLowerCase())
-    }
-
-    temp = this.settings.xrengine_empty_responses
-    if (temp && temp !== undefined) {
-      temp = temp.split(',')
-    } else {
-      temp = ['I am sorry, I do not understand']
-    }
-    this.settings.xrengine_empty_responses = []
-    for (let i = 0; i < temp.length; i++) {
-      this.settings.xrengine_empty_responses.push(temp[i].toLowerCase())
-    }
-
-    //generateVoice('hello there', (buf, path) => {}, false)
-    console.log('creating xr engine client', settings)
-
-    // if (xr) {
-    //   xr.quit()
-    //   xr = undefined
-    // }
-    this.xrengineBot = new XREngineBot({
-      headless: true,
-      agent: agent,
-      settings: settings,
-      xrengineclient: this,
-    })
-
-    this.xvfb = new Xvfb()
-    await this.xvfb.start(async function (err, xvfbProcess) {
-      if (err) {
-        console.log(err)
-        this.xvfb.stop(function (_err) {
-          if (_err) log(_err)
-        })
+      let temp = this.settings.xrengine_starting_words
+      if (temp && temp !== undefined) {
+        temp = temp.split(',')
+      } else {
+        temp = ['hi', 'hey']
+      }
+      this.settings.xrengine_starting_words = []
+      for (let i = 0; i < temp.length; i++) {
+        this.settings.xrengine_starting_words.push(temp[i].toLowerCase())
       }
 
-      try {
-        console.log('started virtual window')
-        console.log('Preparing to connect to ', settings.url)
-        cli.xrengineBot.delay(3000 + Math.random() * 1000)
-        console.log('Connecting to server...')
-        await cli.xrengineBot.launchBrowser()
-        const XRENGINE_URL =
-          (settings.url as string) || 'https://n3xus.city/location/test'
-        cli.xrengineBot.enterRoom(XRENGINE_URL, settings.xrengine_bot_name)
-        console.log('bot fully loaded')
-      } catch (e) {
-        console.log('XVFB ERROR:', e)
+      temp = this.settings.xrengine_empty_responses
+      if (temp && temp !== undefined) {
+        temp = temp.split(',')
+      } else {
+        temp = ['I am sorry, I do not understand']
       }
-    })
+      this.settings.xrengine_empty_responses = []
+      for (let i = 0; i < temp.length; i++) {
+        this.settings.xrengine_empty_responses.push(temp[i].toLowerCase())
+      }
+
+      //generateVoice('hello there', (buf, path) => {}, false)
+      console.log('creating xr engine client', settings)
+
+      // if (xr) {
+      //   xr.quit()
+      //   xr = undefined
+      // }
+      this.xrengineBot = new XREngineBot({
+        headless: true,
+        agent: agent,
+        settings: settings,
+        xrengineclient: this,
+      })
+
+      this.xvfb = new Xvfb()
+      await this.xvfb.start(async function (err, xvfbProcess) {
+        if (err) {
+          console.log(err)
+          this.xvfb.stop(function (_err) {
+            if (_err) log(_err)
+          })
+        }
+
+        try {
+          console.log('started virtual window')
+          console.log('Preparing to connect to ', settings.url)
+          cli.xrengineBot.delay(3000 + Math.random() * 1000)
+          console.log('Connecting to server...')
+          await cli.xrengineBot.launchBrowser()
+          const XRENGINE_URL =
+            (settings.url as string) || 'https://n3xus.city/location/test'
+          cli.xrengineBot.enterRoom(XRENGINE_URL, settings.xrengine_bot_name)
+          console.log('bot fully loaded')
+        } catch (e) {
+          console.log('XVFB ERROR:', e)
+        }
+      })
+    } catch (e) {
+      console.log('XREngineClient.createXREngineClient', e)
+    }
   }
   destroy() {
     if (this.xrengienBot) {
@@ -740,27 +761,31 @@ class XREngineBot {
 
   messageLoop() {
     setInterval(async () => {
-      this.timeStamp += 1
-      if (
-        this.queue.length > 0 &&
-        this.queue[0] &&
-        this.queue[0].delay <= this.timeStamp
-      ) {
-        await this.handleMessage(this.queue[0].message, this.queue[0].clean)
-        this.queue.shift()
-        this.timeStamp = 0
-      }
+      try {
+        this.timeStamp += 1
+        if (
+          this.queue.length > 0 &&
+          this.queue[0] &&
+          this.queue[0].delay <= this.timeStamp
+        ) {
+          await this.handleMessage(this.queue[0].message, this.queue[0].clean)
+          this.queue.shift()
+          this.timeStamp = 0
+        }
+      } catch (e) {}
     }, 1000)
   }
   async sendMessage(message, clean = false) {
-    log('sending message: ' + message)
-    if (!message || message === undefined) return
+    try {
+      log('sending message: ' + message)
+      if (!message || message === undefined) return
 
-    this.evaluate(msg => {
-      try {
-        globalThis.sendMessage(msg)
-      } catch (e) {}
-    }, message)
+      this.evaluate(msg => {
+        try {
+          globalThis.sendMessage(msg)
+        } catch (e) {}
+      }, message)
+    } catch (e) {}
   }
   async handleMessage(message, clean = false) {
     await this.typeMessage('newMessage', message, clean)
@@ -1465,9 +1490,11 @@ class XREngineBot {
   }
 
   async typeMessage(input, message, clean) {
-    if (clean)
-      await this.page.click(`input[name="${input}"]`, { clickCount: 3 })
-    await this.page.type(`input[name="${input}"]`, message, { delay: 50 })
+    try {
+      if (clean)
+        await this.page.click(`input[name="${input}"]`, { clickCount: 3 })
+      await this.page.type(`input[name="${input}"]`, message, { delay: 50 })
+    } catch (e) {}
   }
 
   async setFocus(selector) {
@@ -1480,9 +1507,11 @@ class XREngineBot {
   quit() {
     if (this.page) {
       this.page.close()
+      this.page = null
     }
     if (this.browser) {
       this.browser.close()
+      this.browser = null
     }
   }
 }

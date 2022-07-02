@@ -22,6 +22,7 @@ import spawnPythonServer from './systems/pythonServer'
 import { auth } from './middleware/auth'
 import { classify, initWeaviateClient } from './systems/weaviateClient'
 import cors_server from './cors-server'
+import { tts_tiktalknet } from './systems/tiktalknet'
 
 const app: Koa = new Koa()
 const router: Router = new Router()
@@ -29,10 +30,6 @@ const router: Router = new Router()
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 
 async function init() {
-  /*await convertToMp4(
-    'https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8',
-    'test.mp4'
-  )*/
   // async function initLoop() {
   //   new roomManager()
   //   const expectedServerDelta = 1000 / 60
@@ -67,6 +64,7 @@ async function init() {
   await initClassifier()
   await initTextToSpeech()
   new cacheManager()
+  await cacheManager.instance._delete('CACHED_FREE_PORTS')
   await initWeaviateClient(
     process.env.WEAVIATE_IMPORT_DATA?.toLowerCase().trim() === 'true',
     process.env.CLASSIFIER_IMPORT_DATA?.toLowerCase().trim() === 'true'
@@ -195,7 +193,7 @@ async function init() {
   var optionSsl = {
     key: useSSL ? fs.readFileSync('certs/key.pem') : '',
     cert: useSSL ? fs.readFileSync('certs/cert.pem') : '',
-    rejectUnauthorized: false
+    rejectUnauthorized: false,
   }
   useSSL
     ? https

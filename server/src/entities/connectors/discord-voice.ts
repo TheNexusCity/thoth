@@ -10,6 +10,7 @@ import { getAudioUrl } from '../../routes/getAudioUrl'
 import { addSpeechEvent } from './voiceUtils/addSpeechEvent'
 import { removeEmojisFromString } from '../../utils/utils'
 import { cacheManager } from '../../cacheManager'
+import { tts_tiktalknet } from '../../systems/tiktalknet'
 
 //const transcriber = new Transcriber('288916776772018')
 export function initSpeechClient(
@@ -87,9 +88,11 @@ export function initSpeechClient(
               voiceCharacter,
               response as string
             )
-          } else {
+          } else if (voiceProvider === 'google') {
             // google tts
             url = await tts(response, voiceCharacter, languageCode)
+          } else {
+            url = await tts_tiktalknet(response, voiceCharacter)
           }
 
           cacheManager.instance.set(

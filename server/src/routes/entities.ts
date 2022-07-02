@@ -23,6 +23,7 @@ import {
 import { isValidArray, isValidObject } from '../../src/utils/utils'
 import fs from 'fs'
 import path from 'path'
+import { tts_tiktalknet } from '../systems/tiktalknet'
 
 export const modules: Record<string, unknown> = {}
 
@@ -321,6 +322,10 @@ const getTextToSpeech = async (ctx: Koa.Context) => {
   const voice_provider = ctx.request.query.voice_provider
   const voice_character = ctx.request.query.voice_character
   const voice_language_code = ctx.request.query.voice_language_code
+
+  if (voice_provider === 'tiktalknet') {
+    return (ctx.body = await tts_tiktalknet(text, character))
+  }
 
   console.log('text and character are', text, voice_character)
   const cache = await cacheManager.instance.get(

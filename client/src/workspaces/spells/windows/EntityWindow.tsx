@@ -36,7 +36,7 @@ const EntityWindow = ({ id, updateCallback, greetings }) => {
   const [discord_api_key, setDiscordApiKey] = useState('')
 
   const [use_voice, setUseVoice] = useState(false)
-  const [voice_provider, setVoiceProvider] = useState(false)
+  const [voice_provider, setVoiceProvider] = useState('')
   const [voice_character, setVoiceCharacter] = useState('')
   const [voice_language_code, setVoiceLanguageCode] = useState('')
   const [voice_default_phrases, setVoiceDefaultPhrases] = useState('')
@@ -175,7 +175,7 @@ const EntityWindow = ({ id, updateCallback, greetings }) => {
       )
 
       const url =
-        voice_provider === 'google'
+        voice_provider === 'google' || voice_provider === 'tiktalknet'
           ? process.env.REACT_APP_SEARCH_FILE_URL + '/' + resp.data
           : resp.data
       if (url && url.length > 0) {
@@ -760,6 +760,7 @@ const EntityWindow = ({ id, updateCallback, greetings }) => {
               <option defaultValue hidden></option>
               <option value={'google'}>Google</option>
               <option value={'uberduck'}>Uberduck</option>
+              <option value={'tiktalknet'}>Tiktalknet</option>
             </select>
           </div>
 
@@ -796,7 +797,7 @@ const EntityWindow = ({ id, updateCallback, greetings }) => {
                 <option value={'en-US-Wavenet-I'}>en-US-Wavenet-I</option>
                 <option value={'en-US-Wavenet-J'}>en-US-Wavenet-J</option>
               </select>
-            ) : (
+            ) : voice_provider === 'uberduck' ? (
               <select
                 name="voice_provider"
                 id="voice_provider"
@@ -840,6 +841,23 @@ const EntityWindow = ({ id, updateCallback, greetings }) => {
                 <option value={'yoda'}>yoda</option>
                 <option value={'zoog-disney'}>zoog-disney</option>
                 <option value={'zro'}>zro</option>
+              </select>
+            ) : (
+              <select
+                name="voice_provider"
+                id="voice_provider"
+                value={voice_character}
+                onChange={event => {
+                  setVoiceCharacter(event.target.value)
+                }}
+              >
+                <option defaultValue hidden></option>
+                <option value={'1_ztAbe5YArCMwyyQ_G9lUiz74ym5xJKC'}>
+                  test voice 1
+                </option>
+                <option value={'1_ztAbe5YArCMwyyQ_G9lUiz74ym5xJKC'}>
+                  text voice 2
+                </option>
               </select>
             )}
           </div>
