@@ -2,31 +2,17 @@
 // @ts-nocheck
 
 import fs from 'fs'
-
+import { database } from '../../database'
 import google from 'googleapis'
 import path from 'path'
 import DiscordClient from './discord'
+import readline from 'readline'
 
 import { getRelativeDate, isValidArray } from '../../utils/utils'
 
 const discord_client = new DiscordClient()
 
 const { sendMessageToChannel } = discord_client
-
-export const testData = {
-  summary: 'Google I/O 2015',
-  location: '800 Howard St., San Francisco, CA 94103',
-  description: "A chance to hear more about Google's developer products.",
-  start: {
-    dateTime: getRelativeDate({ daysOffset: 0, hour: 15 }).toJSON(),
-    timeZone: 'America/Los_Angeles',
-  },
-  end: {
-    dateTime: getRelativeDate({ daysOffset: 0, hour: 16 }).toJSON(),
-    timeZone: 'America/Los_Angeles',
-  },
-  recurrence: ['RRULE:FREQ=DAILY;COUNT=2'],
-}
 
 // to generate a google token for dev mode,
 // you can use https://developers.google.com/oauthplayground/
@@ -54,6 +40,53 @@ export const initCalendar = async () => {
   // authorize(JSON.parse(content), deleteCalendarEvent)
   // authorize(JSON.parse(content), addCalendarEvent)
   return JSON.parse(content)
+}
+
+/**
+ * Get and store new token after prompting for user authorization, and then
+ * execute the given callback with the authorized OAuth2 client.
+ * @param {function} callback The callback to call with the authorized client.
+ */
+export const getAccessToken = async callback => {
+  let token = undefined
+  try {
+    token = await fs.promises.readFile(TOKEN_PATH, 'binary')
+  } catch (e) {}
+  if (!token) {
+    const credentials = await initCalendar()
+    const { client_secret, client_id, redirect_uris } = credentials.installed
+    const oAuth2Client = new google.auth.OAuth2(
+      client_id,
+      client_secret,
+      redirect_uris[0]
+    )
+    const authUrl = oAuth2Client.generateAuthUrl({
+      access_type: 'offline',
+      scope: SCOPES,
+    })
+    console.log('Authorize this app by visiting this url:', authUrl)
+
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    })
+    rl.question('Enter the code from that page here: ', code => {
+      rl.close()
+      oAuth2Client.getToken(code, (err, token) => {
+        if (err) {
+          return console.error('Error retrieving access token', err)
+        }
+        // Store the token to disk for later program executions
+        fs.writeFile(TOKEN_PATH, JSON.stringify(token), err => {
+          if (err) {
+            return console.error(err)
+          }
+          console.log('Token stored to', TOKEN_PATH)
+          callback(oAuth2Client)
+        })
+      })
+    })
+  }
 }
 
 /**
@@ -97,17 +130,7 @@ export const addCalendarEvent = async (
     return await calendar.events.insert(
       {
         calendarId: 'primary',
-        resource: {
-          summary: summary,
-          description: description,
-          start: {
-            dateTime: start,
-          },
-          end: {
-            dateTime: end,
-          },
-          ...eventDetails,
-        },
+        resource: eventDetails,
       },
       callable
     )
@@ -119,16 +142,73 @@ export const addCalendarEvent = async (
       }
 
       try {
-        const config: any = await database.instance.getConfig()
-        const channle_name: string = config['discord_calendar_channel']
+        const config: any =
+          await database.instance.getConfigurationSettingByName(
+            'discord_calendar_channel'
+          )
 
-        sendMessageToChannel(
-          channle_name,
-          res.summary + ' has been added to your calendar'
-        )
+        const channle_name = config.value
+        if (channle_name) {
+          sendMessageToChannel(
+            channle_name,
+            res.summary + ' has been added to your calendar'
+          )
+        }
       } catch (error) {
         console.log(error)
-        resolve(null)
+        //resolve(null)
+      }
+
+      resolve(res)
+    }
+  })
+}
+
+/**
+ * Edit the calendar event in the user's primary calendar.
+ * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
+ * @param {string} eventId An calendar event Id.
+ * @param {object} eventDetails An authorized OAuth2 client.
+ */
+export const editCalendarEvent = async (
+  auth: google.auth.OAuth2,
+  eventId: string,
+  eventDetails: object
+) => {
+  return await new Promise(async (resolve, reject) => {
+    if (!auth) return console.log('Missing Token')
+    const calendar = google.calendar({ version: 'v3', auth })
+    return await calendar.events.update(
+      {
+        calendarId: 'primary',
+        eventId: eventId,
+        resource: eventDetails,
+      },
+      callable
+    )
+
+    async function callable(err, res) {
+      if (err) {
+        console.log('There was an error contacting the Calendar service:', err)
+        return resolve(null)
+      }
+
+      try {
+        const config: any =
+          await database.instance.getConfigurationSettingByName(
+            'discord_calendar_channel'
+          )
+
+        const channle_name = config.value
+        if (channle_name) {
+          sendMessageToChannel(
+            channle_name,
+            res.summary + ' has been edited in your calendar'
+          )
+        }
+      } catch (error) {
+        console.log(error)
+        //resolve(null)
       }
 
       resolve(res)
@@ -226,9 +306,14 @@ export const deleteCalendarEvent = async (
         }
 
         try {
-          const config: any = await database.instance.getConfig()
-          const channle_name: string = config['discord_calendar_channel']
-          sendMessageToChannel(channle_name, 'Event deleted')
+          const config: any =
+            await database.instance.getConfigurationSettingByName(
+              'discord_calendar_channel'
+            )
+          const channle_name = config.value
+          if (channle_name) {
+            sendMessageToChannel(channle_name, 'Event deleted')
+          }
         } catch (error) {
           console.log(error)
           resolve(null)

@@ -345,20 +345,29 @@ export class database {
 
   async getGreetings(enabled: boolean) {
     const whereClause = 'WHERE enabled = true'
-    const query = `SELECT id, enabled, send_in AS "sendIn", channel_id AS "channelId", message FROM greetings ${enabled ? whereClause : ''} ORDER BY id ASC`
+    const query = `SELECT id, enabled, send_in AS "sendIn", channel_id AS "channelId", message FROM greetings ${
+      enabled ? whereClause : ''
+    } ORDER BY id ASC`
     const rows = await this.client.query(query)
     return rows.rows
   }
 
   async getGreeting(id: string) {
-    const query = 'SELECT id, enabled, send_in AS "sendIn", channel_id AS "channelId", message FROM greetings WHERE id = $1 ORDER BY id ASC'
+    const query =
+      'SELECT id, enabled, send_in AS "sendIn", channel_id AS "channelId", message FROM greetings WHERE id = $1 ORDER BY id ASC'
     const values = [id]
     const rows = await this.client.query(query, values)
     return rows.rows
   }
 
-  async addGreeting(enabled: boolean, sendIn: string, channelId: string, message: string) {
-    const query = 'INSERT INTO greetings (enabled, send_in, channel_id, message) VALUES ($1, $2, $3, $4)'
+  async addGreeting(
+    enabled: boolean,
+    sendIn: string,
+    channelId: string,
+    message: string
+  ) {
+    const query =
+      'INSERT INTO greetings (enabled, send_in, channel_id, message) VALUES ($1, $2, $3, $4)'
     const values = [enabled, sendIn, channelId, message]
     try {
       return await this.client.query(query, values)
@@ -366,9 +375,16 @@ export class database {
       throw new Error(e)
     }
   }
-  
-  async updateGreeting(enabled: boolean, sendIn: string, channelId: string, message: string, id: string) {
-    const query = 'UPDATE greetings SET enabled = $1, send_in = $2, channel_id = $3, message = $4 WHERE id = $5'
+
+  async updateGreeting(
+    enabled: boolean,
+    sendIn: string,
+    channelId: string,
+    message: string,
+    id: string
+  ) {
+    const query =
+      'UPDATE greetings SET enabled = $1, send_in = $2, channel_id = $3, message = $4 WHERE id = $5'
     const values = [enabled, sendIn, channelId, message, id]
     try {
       return await this.client.query(query, values)
@@ -630,11 +646,12 @@ export class database {
     date: string,
     time: string,
     type: string,
-    moreInfo: string
+    moreInfo: string,
+    eventInfo: string
   ) {
     const query =
-      'INSERT INTO calendar_events(name, calendar_id, date, time, type, more_info) VALUES ($1, $2, $3, $4, $5, $6)'
-    const values = [name, calendar_id, date, time, type, moreInfo]
+      'INSERT INTO calendar_events(name, calendar_id, date, time, type, more_info, event_info) VALUES ($1, $2, $3, $4, $5, $6, $7)'
+    const values = [name, calendar_id, date, time, type, moreInfo, eventInfo]
     try {
       return await this.client.query(query, values)
     } catch (e) {
@@ -647,11 +664,12 @@ export class database {
     date: string,
     time: string,
     type: string,
-    moreInfo: string
+    moreInfo: string,
+    eventInfo: string
   ) {
     const query =
-      'UPDATE calendar_events SET name = $1, date = $2, time = $3, type = $4, more_info = $5 WHERE id = $6'
-    const values = [name, date, time, type, moreInfo, id]
+      'UPDATE calendar_events SET name = $1, date = $2, time = $3, type = $4, more_info = $5, event_info = $6 WHERE id = $7'
+    const values = [name, date, time, type, moreInfo, eventInfo, id]
     try {
       return await this.client.query(query, values)
     } catch (e) {
@@ -660,7 +678,7 @@ export class database {
   }
   async deleteCalendarEvent(id: string) {
     const query1 =
-      'SELECT id, name, calendar_id, date, time, type, more_info AS "moreInfo" FROM calendar_events WHERE id = $1'
+      'SELECT id, name, calendar_id, date, time, type, more_info AS "moreInfo", event_info AS "eventInfo" FROM calendar_events WHERE id = $1'
     const rows = await this.client.query(query1, [id])
 
     let body: object[] = []

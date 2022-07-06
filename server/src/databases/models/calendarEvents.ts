@@ -8,6 +8,7 @@ export interface calendarEventsAttributes {
   time?: string
   type?: string
   moreInfo?: string
+  eventInfo?: string
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Boolean
@@ -19,6 +20,7 @@ export type calendarEventsOptionalAttributes =
   | 'time'
   | 'type'
   | 'moreInfo'
+  | 'eventInfo'
   | 'createdAt'
   | 'updatedAt'
   | 'deletedAt'
@@ -37,6 +39,7 @@ export class calendarEvents
   time?: string
   type?: string
   moreInfo?: string
+  eventInfo?: string
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Boolean
@@ -65,6 +68,10 @@ export class calendarEvents
           allowNull: true,
         },
         moreInfo: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+        eventInfo: {
           type: DataTypes.TEXT,
           allowNull: true,
         },

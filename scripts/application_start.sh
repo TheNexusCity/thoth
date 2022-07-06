@@ -10,6 +10,7 @@ cd /opt/thoth
 #install node modules
 yarn install
 
+mkdir -p thoth/server/credentials/ && cp -R thoth_env/credentials/* thoth/server/credentials/
 cp /etc/letsencrypt/live/thoth.n3xus.city/privkey.pem /opt/thoth/client/certs/key.pem
 cp /etc/letsencrypt/live/thoth.n3xus.city/cert.pem /opt/thoth/client/certs/cert.pem
 
