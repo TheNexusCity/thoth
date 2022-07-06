@@ -18,6 +18,7 @@ import {
   authorize,
   initCalendar,
   addCalendarEvent,
+  editCalendarEvent,
   deleteCalendarEvent,
 } from '../../src/entities/connectors/calendar'
 import { isValidArray, isValidObject } from '../../src/utils/utils'
@@ -650,6 +651,7 @@ const getCalendarEvents = async (ctx: Koa.Context) => {
     return (ctx.body = { error: 'internal error' })
   }
 }
+/*
 const addCalendarEvent = async (ctx: Koa.Context) => {
   const name = ctx.request.body.name
   const date = ctx.request.body.date
@@ -670,7 +672,7 @@ const addCalendarEvent = async (ctx: Koa.Context) => {
     ctx.status = 500
     return (ctx.body = { payload: [], message: 'internal error' })
   }
-}
+}*/
 
 /**
  * @param {number} time - time in seconds format: new Date().getTime()
@@ -693,6 +695,7 @@ const addCalendarEvents = async (ctx: Koa.Context) => {
     type?.length <= 0 ||
     moreInfo?.length <= 0
   ) {
+    ctx.status = 400
     return (ctx.body = { error: 'invalid event data' })
   }
 
@@ -700,44 +703,31 @@ const addCalendarEvents = async (ctx: Koa.Context) => {
     const content = await initCalendar()
     const auth = await authorize(content)
 
-    const currentTime = new Date(Number(time)).getHours()
-    const givenTime = new Date(Number(time)).getHours() + 1
-    const currentDate = new Date().getDate()
-    const givenDate = new Date(date).getDate()
+    const currentDate = new Date()
+    const eventDate = new Date(Date.parse(`${date} ${time}:00`))
 
-    if (
-      isNaN(currentTime) ||
-      isNaN(givenTime) ||
-      isNaN(currentDate) ||
-      isNaN(givenDate)
-    ) {
+    if (isNaN(eventDate)) {
+      ctx.status = 400
       return (ctx.body = { error: 'invalid date or time' })
     }
 
-    if (currentDate > givenDate) {
+    if (currentDate > eventDate) {
+      ctx.status = 400
       return (ctx.body = { error: 'invalid date' })
     }
 
-    if (currentTime > givenTime) {
-      return (ctx.body = { error: 'invalid time' })
-    }
-
-    let startDateTime: Date = new Date()
-    startDateTime.setDate(currentDate)
-    startDateTime.setHours(currentTime)
-
-    let endDateTime: Date = new Date()
-    endDateTime.setDate(currentDate)
-    endDateTime.setHours(givenTime)
+    const eventEndDate = new Date(
+      new Date(eventDate).setHours(eventDate.getHours() + 1)
+    )
 
     const addEvenetRes = await addCalendarEvent(auth, {
       summary: name,
       start: {
-        dateTime: startDateTime.toISOString(),
+        dateTime: eventDate.toISOString().split('.')[0],
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       },
       end: {
-        dateTime: endDateTime.toISOString(),
+        dateTime: eventEndDate.toISOString().split('.')[0],
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       },
       description: moreInfo,
@@ -767,6 +757,7 @@ const addCalendarEvents = async (ctx: Koa.Context) => {
         date,
         time,
         type,
+        moreInfo,
         JSON.stringify(addEvenetRes)
       )
 
@@ -783,39 +774,114 @@ const addCalendarEvents = async (ctx: Koa.Context) => {
         })
       }
     }
-
+    ctx.status = 400
     return (ctx.body = {
       message: 'Inserting Calender event is failed',
       payload: [],
     })
   } catch (e) {
-    console.log('addCalendarEvents:', e)
-
     ctx.status = 500
     return (ctx.body = { error: 'Invalid user credentials or Internal error' })
   }
 }
 
-const editCalendarEvent = async (ctx: Koa.Context) => {
+const editCalendarEvents = async (ctx: Koa.Context) => {
   const id = ctx.params.id
-  const name = ctx.request.body.name
-  const date = ctx.request.body.date
-  const time = ctx.request.body.time
-  const type = ctx.request.body.type
-  const moreInfo = ctx.request.body.moreInfo
+  const { name, date, time, type, moreInfo } = ctx.request.body
+
+  if (
+    !name ||
+    !date ||
+    !time ||
+    !type ||
+    !moreInfo ||
+    name?.length <= 0 ||
+    date?.length <= 0 ||
+    time?.length <= 0 ||
+    type?.length <= 0 ||
+    moreInfo?.length <= 0
+  ) {
+    ctx.status = 400
+    return (ctx.body = { error: 'invalid event data' })
+  }
 
   try {
-    await database.instance.editCalendarEvent(
-      id,
-      name,
-      date,
-      time,
-      type,
-      moreInfo
+    const content = await initCalendar()
+    const auth = await authorize(content)
+
+    const currentDate = new Date()
+    const eventDate = new Date(Date.parse(`${date} ${time}:00`))
+
+    if (isNaN(eventDate)) {
+      ctx.status = 400
+      return (ctx.body = { error: 'invalid date or time' })
+    }
+
+    if (currentDate > eventDate) {
+      ctx.status = 400
+      return (ctx.body = { error: 'invalid date' })
+    }
+
+    const eventEndDate = new Date(
+      new Date(eventDate).setHours(eventDate.getHours() + 1)
     )
-    return (ctx.body = 'edited')
+
+    const events = await database.instance.getCalendarEventById(id)
+    if (!isValidArray(events)) {
+      ctx.status = 400
+      return (ctx.body = {
+        message: 'Calender event not found',
+      })
+    }
+
+    const { calendar_id } = events[0]
+    const editEvenetRes = await editCalendarEvent(auth, calendar_id, {
+      summary: name,
+      start: {
+        dateTime: eventDate.toISOString().split('.')[0],
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      },
+      end: {
+        dateTime: eventEndDate.toISOString().split('.')[0],
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      },
+      description: moreInfo,
+      location: '',
+      attendees: [],
+      reminders: {
+        useDefault: false,
+        overrides: [
+          {
+            method: 'email',
+            minutes: 24 * 60,
+          },
+          {
+            method: 'popup',
+            minutes: 10,
+          },
+        ],
+      },
+    })
+
+    if (isValidObject(editEvenetRes)) {
+      await database.instance.editCalendarEvent(
+        id,
+        name,
+        date,
+        time,
+        type,
+        moreInfo,
+        JSON.stringify(editEvenetRes)
+      )
+      return (ctx.body = {
+        message: 'Calender event edited success',
+      })
+      return (ctx.body = {
+        message: 'Calender event edit failed',
+      })
+    }
   } catch (e) {
-    ctx.status = 500
+    ctx.status = 400
     return (ctx.body = { error: 'internal error' })
   }
 }
@@ -837,7 +903,7 @@ const deleteCalendarEvents = async (ctx: Koa.Context) => {
           success: true,
         })
     }
-
+    ctx.status = 400
     return (ctx.body = {
       message: 'calendar deleted failed!',
       success: false,
@@ -845,7 +911,7 @@ const deleteCalendarEvents = async (ctx: Koa.Context) => {
   } catch (e) {
     console.log('deleteCalendarEvent:', e)
 
-    ctx.status = 500
+    ctx.status = 400
     return (ctx.body = {
       error: 'Invalid user credentials or Internal error',
       success: false,
@@ -996,7 +1062,7 @@ export const entities: Route[] = [
   {
     path: '/calendar_event/:id',
     access: noAuth,
-    patch: editCalendarEvent,
+    patch: editCalendarEvents,
     delete: deleteCalendarEvents,
   },
   {

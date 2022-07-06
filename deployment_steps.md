@@ -33,7 +33,12 @@
 
 13. Go to the project root path
 
-14. Copy certificates
+14. Google calendar api
+
+    - Create Project into Google developer console (https://developers.google.com/identity/protocols/oauth2/service-account#httprest)
+    - Put credentials.json and token.json files into ``thoth/server/credentials/```
+
+15. Copy certificates
 
     - Copy generated certificates into client dir. (tooth/client/certs)
       - `cp /etc/letsencrypt/live/<domainName>/privkey.pem /opt/thoth/client/certs/key.pem`
@@ -42,7 +47,7 @@
       - `cp /etc/letsencrypt/live/<domainName>/privkey.pem /opt/thoth/server/certs/key.pem`
       - `cp /etc/letsencrypt/live/<domainName>/cert.pem /opt/thoth/server/certs/cert.pem`
 
-15. Open client .env file (vim client/.env).
+16. Open client .env file (vim client/.env).
 
 - Change following env params REACT_APP_LAPI_ROOT_URL, REACT_APP_API_ROOT_URL, REACT_APP_API_ROOT_URL_PROD, REACT_APP_CORS_URL, REACT_APP_API_URL,REACT_APP_SEARCH_FILE_URL
 
