@@ -92,15 +92,22 @@ export class Task {
         task: { closed: string[] }
       }
       if (found) {
-        console.log('found input', fromSocket, found)
         if (
           found?.task &&
-          found.task.closed.length > 0 // &&
-          // found.key == fromSocket
+          found.task.closed.length > 0 &&
+          found.key === fromSocket
         )
           value = key
       }
     })
+
+    if (!value) {
+      Object.entries(this.inputs).forEach(([key, val]) => {
+        if (val.some((con: ThothReteInput) => con && con.key === fromSocket)) {
+          value = key
+        }
+      })
+    }
 
     return value
   }

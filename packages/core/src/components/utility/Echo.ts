@@ -51,7 +51,7 @@ export class Echo extends ThothComponent<Promise<WorkerReturn>> {
     outputs: ThothWorkerOutputs,
     { silent }: { silent: boolean }
   ) {
-    const input = inputs.string[0] as string
+    const input = (inputs.string[0] ?? inputs.string) as string
     if (!silent) node.display(input as string)
     return {
       output: input,
