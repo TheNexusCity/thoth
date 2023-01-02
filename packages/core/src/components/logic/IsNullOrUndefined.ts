@@ -20,7 +20,7 @@ export class IsNullOrUndefined extends ThothComponent<Promise<void>> {
     super('Is Null Or Undefined')
 
     this.task = {
-      outputs: { true: 'option', false: 'option' },
+      outputs: { isTrue: 'option', isFalse: 'option' },
     }
 
     this.category = 'Logic'
@@ -31,8 +31,8 @@ export class IsNullOrUndefined extends ThothComponent<Promise<void>> {
   builder(node: ThothNode) {
     const inp = new Rete.Input('string', 'String', stringSocket)
     const dataInput = new Rete.Input('trigger', 'Trigger', triggerSocket, true)
-    const isTrue = new Rete.Output('true', 'True', triggerSocket)
-    const isFalse = new Rete.Output('false', 'False', triggerSocket)
+    const isTrue = new Rete.Output('isTrue', 'True', triggerSocket)
+    const isFalse = new Rete.Output('isFalse', 'False', triggerSocket)
 
     return node
       .addInput(inp)
@@ -52,6 +52,6 @@ export class IsNullOrUndefined extends ThothComponent<Promise<void>> {
       action === null || action === undefined || (action as string).length <= 0
     console.log('found null or empty input:', is)
 
-    this._task.closed = is ? ['false'] : ['true']
+    this._task.closed = is ? ['isFalse'] : ['isTrue']
   }
 }

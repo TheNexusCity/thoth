@@ -83,7 +83,6 @@ export class Task {
   }
 
   getInputByNodeId(node, fromSocket) {
-    if (Object.keys(this.inputs).length > 5) debugger
     let value: null | any = null
     Object.entries(this.inputs).forEach(([key, input]) => {
       const found = input.find(
@@ -93,10 +92,11 @@ export class Task {
         task: { closed: string[] }
       }
       if (found) {
+        console.log('found input', fromSocket, found)
         if (
           found?.task &&
-          found.task.closed.length > 0 &&
-          found.key == fromSocket
+          found.task.closed.length > 0 // &&
+          // found.key == fromSocket
         )
           value = key
       }
