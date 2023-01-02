@@ -49,7 +49,7 @@ export interface UserSpellArgs {
 
 export const spellApi = rootApi.injectEndpoints({
   endpoints: builder => ({
-    getSpells: builder.query<Spell[], string>({
+    getSpells: builder.query<Spell[], void>({
       providesTags: ['Spells'],
       query: () => ({
         url: `spells`,
@@ -60,12 +60,11 @@ export const spellApi = rootApi.injectEndpoints({
       query: ({ spellId }) => {
         return {
           url: `spells/${spellId}`,
-          params: { },
+          params: {},
         }
       },
     }),
     runSpell: builder.mutation<Record<string, any>, RunSpell>({
-      
       query: ({ spellId, inputs, state = {} }) => ({
         url: `spells/${spellId}`,
         method: 'POST',
@@ -76,7 +75,6 @@ export const spellApi = rootApi.injectEndpoints({
       }),
     }),
     saveDiff: builder.mutation<void, Diff>({
-      invalidatesTags: ['Spell'],
       query: diffData => ({
         url: 'spells/saveDiff',
         method: 'POST',
@@ -93,7 +91,6 @@ export const spellApi = rootApi.injectEndpoints({
       }),
     }),
     saveSpell: builder.mutation<Partial<Spell>, Partial<Spell> | Spell>({
-      invalidatesTags: ['Spell'],
       // needed to use queryFn as query option didnt seem to allow async functions.
       async queryFn({ user, ...spell }, { dispatch }, extraOptions, baseQuery) {
         const baseQueryOptions = {
@@ -150,7 +147,7 @@ export const spellApi = rootApi.injectEndpoints({
   }),
 })
 
-const selectSpellResults = spellApi.endpoints.getSpells.select('')
+const selectSpellResults = spellApi.endpoints.getSpells.select()
 const emptySpells = []
 
 export const selectAllSpells = createSelector(
