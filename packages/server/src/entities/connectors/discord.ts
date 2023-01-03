@@ -10,7 +10,7 @@
 
 //@ts-nocheck
 // required for message.lineReply
-import Discord, { Intents } from 'discord.js'
+import Discord, { ChannelType, EmbedBuilder, GatewayIntentBits, Partials } from 'discord.js'
 import emoji from 'emoji-dictionary'
 import emojiRegex from 'emoji-regex'
 
@@ -21,12 +21,6 @@ function log(...s: (string | boolean)[]) {
   console.log(...s)
 }
 
-export const channelTypes = {
-  text: 'GUILD_TEXT',
-  dm: 'DM',
-  voice: 'GUILD_VOICE',
-  thread: 'GUILD_PUBLIC_THREAD',
-}
 export class discord_client {
   async destroy() {
     await this.client.destroy()
@@ -165,7 +159,7 @@ export class discord_client {
     client: string | boolean,
     message: string | boolean
   ) => {
-    console.log('new message from discord:', message.content)
+    console.log('new message from discord:', message)
 
     //gets the emojis from the text and replaces to unix specific type
     const reg = emojiRegex()
@@ -219,9 +213,9 @@ export class discord_client {
     }
     //checks if the message contains a direct mention to the bot, or if it is a DM, or if it mentions someone else
     const botMention = `<@!${client.user}>`
-    const isDM = channel.type === channelTypes['dm']
+    const isDM = channel.type === ChannelType.DM
     const isMention =
-      (channel.type === channelTypes['text'] && mentions.has(client.user)) ||
+      (channel.type === ChannelType.GuildText && mentions.has(client.user)) ||
       isDM
     const otherMention =
       !isMention && mentions.members !== null && mentions.members.size > 0
@@ -267,7 +261,7 @@ export class discord_client {
       !content.startsWith('!') &&
       content.toLowerCase().includes(this.bot_name?.toLowerCase())
     const isUserNameMention =
-      (channel.type === channelTypes['text'] || isDM) &&
+      (channel.type === ChannelType.GuildText || isDM) &&
       content &&
       content
         .toLowerCase()
@@ -342,7 +336,7 @@ export class discord_client {
             }) => {
               if (
                 this.use_voice &&
-                channel.type === channelTypes['voice'] &&
+                channel.type === ChannelType.GuildVoice &&
                 channel.name === channelName
               ) {
                 recognizeSpeech(channel, this.entity.id)
@@ -402,20 +396,23 @@ export class discord_client {
       content = content.replace('!ping ', '')
     }
 
-    const response = await this.spellHandler(
-      content,
-      message.author.username,
-      this.discord_bot_name,
-      'discord',
-      message.channel.id,
-      this.entity,
-      this.eth_private_key,
-      this.eth_public_address,
+    const response = await this.spellHandler({
+      message: content,
+      speaker: message.author.username,
+      agent: this.discord_bot_name,
+      client: 'discord',
+      channelId: message.channel.id,
+      entity: this.entity,
+      eth_private_key: this.eth_private_key,
+      eth_public_address: this.eth_public_address,
       roomInfo,
-      'msg'
-    )
+      channel: 'msg'
+    })
 
-    this.handlePingSoloAgent(message.channel.id, message.id, response, false)
+    // get the value of the first entry in the object
+    const firstValue = Object.values(response)[0]
+
+    this.handlePingSoloAgent(message.channel.id, message.id, firstValue, false)
   }
 
   //Event that is triggered when a message is deleted
@@ -459,7 +456,7 @@ export class discord_client {
 
     const oldResponse = this.getResponse(channel.id, id)
     if (oldResponse === undefined) {
-      await channel.messages.fetch(id).then(async (msg: any) => {})
+      await channel.messages.fetch(id).then(async (msg: any) => { })
       log('message not found')
       return
     }
@@ -499,7 +496,7 @@ export class discord_client {
                   utc.getSeconds()
 
                 let parentId = ''
-                if (channel.type === channelTypes['thread']) {
+                if (channel.type === ChannelType.PublicThread) {
                   parentId = channel.prefixOptionalWhenMentionOrDM
                 }
 
@@ -632,8 +629,8 @@ export class discord_client {
               deleted: boolean
               permissionsFor: (arg0: any) => {
                 (): any
-                new (): any
-                has: { (arg0: string[]): any; new (): any }
+                new(): any
+                has: { (arg0: string[]): any; new(): any }
               }
               name: string | boolean
               id: string | boolean
@@ -641,7 +638,7 @@ export class discord_client {
               messages: { fetch: (arg0: { limit: number }) => Promise<any> }
             }) => {
               if (
-                channel.type === channelTypes['text'] &&
+                channel.type === ChannelType.GuildText &&
                 channel.deleted === false &&
                 channel
                   .permissionsFor(client.user.id)
@@ -1317,8 +1314,8 @@ export class discord_client {
     this.entity = entity
     this.spellHandler = spellHandler
     this.eth_private_key = eth_private_key,
-    this.eth_public_address = eth_public_address,
-    this.use_voice = use_voice
+      this.eth_public_address = eth_public_address,
+      this.use_voice = use_voice
     this.voice_provider = voice_provider
     this.voice_character = voice_character
     this.voice_language_code = voice_language_code
@@ -1351,13 +1348,15 @@ export class discord_client {
     if (!token) return console.warn('No API token for Discord bot, skipping')
 
     this.client = new Discord.Client({
-      partials: ['MESSAGE', 'USER', 'REACTION'],
+      partials: [Partials.Message, Partials.User, Partials.Reaction],
       intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_PRESENCES,
-        Intents.FLAGS.GUILD_MEMBERS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_VOICE_STATES,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildVoiceStates,
       ],
     })
     this.bot_name = discord_bot_name
@@ -1378,8 +1377,8 @@ export class discord_client {
     this.client.username_regex = new RegExp(this.discord_bot_name_regex, 'ig') //'((?:digital|being)(?: |$))'
     this.client.edit_messages_max_count = 5
 
-    const embed = new Discord.MessageEmbed().setColor(0x00ae86)
-
+    const embed = new EmbedBuilder().setColor(0x00ae86)
+      
     this.client.embed = embed
 
     if (this.use_voice) {

@@ -3,9 +3,11 @@ import {
   joinVoiceChannel,
   createAudioPlayer,
   createAudioResource,
+  AudioPlayerStatus,
   StreamType,
   VoiceConnectionStatus,
 } from '@discordjs/voice'
+import { createReadStream } from 'fs'
 import { tts } from '../../systems/googleTextToSpeech'
 import { getAudioUrl } from '../../routes/getAudioUrl'
 import { addSpeechEvent } from './voiceUtils/addSpeechEvent'
@@ -17,20 +19,27 @@ export function initSpeechClient(
   client,
   discord_bot_name,
   entity,
-  handleInput,
+  spellHandler,
   voiceProvider,
   voiceCharacter,
   languageCode,
   tiktalknet_url
 ) {
   addSpeechEvent(client, { group: 'default_' + entity.id })
-
+  const audioPlayer = createAudioPlayer({
+    behaviors: {
+      noSubscriber: "play"
+  },
+  debug: true
+  })
   client.on('speech', async msg => {
     console.log('msg is ', msg)
     const content = msg.content
     const connection = msg.connection
     const author = msg.author
     const channel = msg.channel
+
+    connection.subscribe(audioPlayer)
 
     console.log('got voice input:', content)
     if (content) {
@@ -53,25 +62,27 @@ export function initSpeechClient(
       } catch (e) {}
 
       console.log(roomInfo)
-      const response = removeEmojisFromString(
-        await handleInput(
-          content,
-          author?.username ?? 'VoiceSpeaker',
-          discord_bot_name,
-          'discord',
-          channel.id,
+      const fullResponse = await spellHandler({
+          message: content,
+          speaker: author?.username ?? 'VoiceSpeaker',
+          agent: discord_bot_name,
+          client: 'discord',
+          channelId: channel.id,
           entity,
           roomInfo,
-          'voice'
-        )
-      )
+          channel: 'voice'
+    })
+      let response = Object.values(fullResponse)[0]
+
       if (response === undefined || !response || response.length <= 0) {
         return
       }
 
+      response = removeEmojisFromString(response)
+
       console.log('response is', response)
+      let url
       if (response) {
-        const audioPlayer = createAudioPlayer()
           if (voiceProvider === 'uberduck') {
             url = await getAudioUrl(
               process.env.UBER_DUCK_KEY as string,
@@ -86,15 +97,23 @@ export function initSpeechClient(
           } else {
             url = await tts_tiktalknet(response, voiceCharacter, tiktalknet_url)
           }
-        
+          if (url) {
+
+
+
         // const url = await tts(response)
-        connection.subscribe(audioPlayer)
         console.log('speech url:', url)
-        if (url) {
-          const audioResource = createAudioResource(url, {
+          const audioResource = createAudioResource(createReadStream(url), {
             inputType: StreamType.Arbitrary,
           })
-          audioPlayer.play(audioResource)
+          audioPlayer.play(audioResource, { inlineVolume: true })
+          audioPlayer.on(AudioPlayerStatus.Playing, () => {
+            console.log('Now playing')
+          })
+          audioPlayer.on(AudioPlayerStatus.Idle, () => {
+            console.log('Finished playing')
+          }
+          )
         }
       }
     }
@@ -115,6 +134,7 @@ export async function recognizeSpeech(textChannel, clientId) {
       adapterCreator: textChannel.guild.voiceAdapterCreator,
       selfDeaf: false,
       group: 'default_' + clientId,
+      selfMute: false // this may also be needed
     })
   }
 }

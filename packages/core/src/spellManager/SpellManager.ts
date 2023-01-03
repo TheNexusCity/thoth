@@ -8,8 +8,8 @@ export default class SpellManager {
   socket: io.Socket
   thothInterface: EngineContext
 
-  constructor(thothInterface: EngineContext, socket: io.Socket) {
-    this.socket = socket
+  constructor(thothInterface: EngineContext, socket?: io.Socket) {
+    if (socket) this.socket = socket
     this.thothInterface = thothInterface
   }
 

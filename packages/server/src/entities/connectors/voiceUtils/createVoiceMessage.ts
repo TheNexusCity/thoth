@@ -1,5 +1,5 @@
 import { VoiceConnection } from '@discordjs/voice'
-import { Client, User } from 'discord.js'
+import { ChannelType, Client, User } from 'discord.js'
 import { convertStereoToMono, getDurationFromMonoBuffer } from './audio'
 import { SpeechOptions } from './speechOptions'
 import VoiceMessage from './VoiceMessage'
@@ -33,7 +33,7 @@ export default async ({
   }
 
   const channel = client.channels.cache.get(connection.joinConfig.channelId)
-  if (!channel || !channel.isVoice()) return undefined
+  if (!channel || channel.type !== ChannelType.GuildVoice) return undefined
 
   const voiceMessage = new VoiceMessage({
     client,

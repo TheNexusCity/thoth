@@ -6,6 +6,48 @@ import { tts } from '../systems/googleTextToSpeech'
 import { stringIsAValidUrl } from '../utils/utils'
 import { tts_tiktalknet } from '../systems/tiktalknet'
 import { database } from '../database'
+import SpellManager from '@thothai/thoth-core/src/spellManager/SpellManager'
+import { buildThothInterface } from '@thothai/thoth-server/src/routes/spells/buildThothInterface'
+
+function CreateSpellHandler({ spell }) {
+
+  const thothInterface = buildThothInterface({})
+  const spellManager = new SpellManager(thothInterface)
+
+  const spellRunner = spellManager.load(spell)
+
+  async function spellHandler({
+    message,
+    speaker,
+    agent,
+    client,
+    channelId,
+    entity,
+    eth_private_key,
+    eth_public_address,
+    roomInfo,
+    channel
+  }) {
+    const spellInputs = {
+      Input: message,
+      Speaker: speaker,
+      Agent: agent,
+      Client: client,
+      ChannelID: channelId,
+      Entity: entity,
+      RoomInfo: roomInfo,
+      Channel: channel,
+      eth_private_key,
+      eth_public_address
+    } as any
+    console.log('spellInputs', spellInputs)
+    const spellOutputs = await spellRunner.defaultRun(spellInputs)
+    console.log('spellOutputs', spellOutputs)
+    return spellOutputs
+  }
+
+  return spellHandler;
+}
 
 // import { telegram_client } from './connectors/telegram'
 // import { twilio_client } from './connectors/twilio'
@@ -57,7 +99,7 @@ export class Entity {
       where: { name: spell_handler },
     })
 
-    const spellHandler =  null // await CreateSpellHandler({ spell })
+    const spellHandler = CreateSpellHandler({ spell })
 
     this.discord = new discord_client()
     console.log('createDiscordClient')
@@ -124,19 +166,19 @@ export class Entity {
       where: { name: twitter_spell_handler_incoming },
     })
 
-    const spellHandler = null 
-    // await CreateSpellHandler({
-    //   spell: incoming_spell,
-    // })
+    const spellHandler = 
+    await CreateSpellHandler({
+      spell: incoming_spell,
+    })
 
     const auto_spell = await database.instance.models.spells.findOne({
       where: { name: twitter_spell_handler_incoming },
     })
 
-    const spellHandlerAuto = null
-    // await CreateSpellHandler({
-    //   spell: auto_spell,
-    // })
+    const spellHandlerAuto =
+    await CreateSpellHandler({
+      spell: auto_spell,
+    })
 
     this.twitter = new twitter_client()
     console.log('createTwitterClient')
