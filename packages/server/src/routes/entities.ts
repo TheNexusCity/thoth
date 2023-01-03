@@ -190,7 +190,7 @@ const createEvent = async (ctx: Koa.Context) => {
   console.log('Creating event:', agent, speaker, client, channel, text, type)
 
   // Todo needs error handling
-  await events.createEvent({
+  await database.instance.createEvent({
     type,
     agent,
     speaker,

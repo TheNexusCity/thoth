@@ -169,11 +169,14 @@ export class Task {
         this.getInputs('output').map(async key => {
           const inputPromises = this.inputs[key]
             .filter((con: ThothReteInput) => {
-              // only filter inputs to remove ones that are not the origin if a task option is true
-              if (!this.component.task.runOneInput || !fromNode) return true
 
               // return true if the input is from a triggerless component
               if (!con.task.node.outputs.trigger) return true
+
+              if (con.task.component.name === 'Spell') return false
+
+              // only filter inputs to remove ones that are not the origin if a task option is true
+              if (!this.component.task.runOneInput || !fromNode) return true
 
               return con.task.node.id === fromNode.id
             })
@@ -204,8 +207,8 @@ export class Task {
         targetNode: fromNode ? fromNode : null,
       }
 
-      // the main output data of the task, which is gathered up when the next node gets this nodes value
-      this.outputData = await this.worker(this, inputs, data, socketInfo)
+        // the main output data of the task, which is gathered up when the next node gets this nodes value
+        this.outputData = await this.worker(this, inputs, data, socketInfo)
 
       // an onRun option in case a task whats to do something when the task is run.
       if (this.component.task.onRun)

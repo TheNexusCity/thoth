@@ -76,13 +76,9 @@ export class EventStore extends ThothComponent<Promise<void>> {
     { silent, thoth }: { silent: boolean; thoth: EngineContext }
   ) {
     const { storeEvent } = thoth
-    const agent = inputs['agent'][0] as Agent
-    const primary = ((inputs['primary'] && inputs['primary'][0]) ||
-      inputs['primary']) as string
-    const secondary = ((inputs['secondary'] && inputs['secondary'][0]) ||
-      inputs['secondary']) as string
-
-    if (!primary) return console.log('Event null, so skipping')
+    const agent = (inputs['agent'][0] ?? inputs['agent']) as Agent
+    const primary = inputs['primary'][0] as string
+    const secondary = inputs['secondary'] && inputs['secondary'][0] as string
 
     const typeData = node?.data?.type as string
     const type =
@@ -93,29 +89,27 @@ export class EventStore extends ThothComponent<Promise<void>> {
     let respUser
     let respAgent
 
-    const { speaker, client, channel } = agent
-
-    if (primary) {
+    if (primary && primary !== '') {
       respUser = await storeEvent({
         type,
         agent: agent.agent,
-        speaker,
-        sender: speaker,
+        speaker: agent.speaker,
+        sender: agent.speaker,
         text: primary,
-        client,
-        channel,
+        client: agent.client,
+        channel: agent.channel,
       })
     }
 
-    if (secondary) {
+    if (secondary && secondary !== '') {
       respAgent = await storeEvent({
         type,
         agent: agent.agent,
-        speaker,
+        speaker: agent.speaker,
         sender: agent.agent,
         text: secondary,
-        client,
-        channel,
+        client: agent.client,
+        channel: agent.channel,
       })
     }
     if (!silent) node.display(respUser?.data + '|' + respAgent?.data)
