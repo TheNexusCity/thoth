@@ -1,12 +1,11 @@
-import { CustomError } from './../../utils/CustomError'
-import { EngineContext, ThothWorkerInputs } from '@thothai/thoth-core/types'
-import Koa from 'koa'
+import { CreateEventArgs, EngineContext, GetEventArgs, ThothWorkerInputs, Spell as SpellType } from '@thothai/thoth-core/types'
+import axios from 'axios'
 import vm2 from 'vm2'
-import { GetEventArgs, CreateEventArgs } from '@thothai/thoth-core/types'
-
-import { searchWikipedia } from '../wikipedia/helpers'
 import queryGoogle from '../utils/queryGoogle'
+import { searchWikipedia } from '../wikipedia/helpers'
+import { CustomError } from './../../utils/CustomError'
 
+import SpellRunner from '@thothai/thoth-core/src/spellManager/SpellRunner'
 import { database } from './../../database'
 
 const getEvents = async ({
@@ -26,7 +25,7 @@ const getEvents = async ({
     channel,
     maxCount,
     max_time_diff
-})
+  })
 
   if (!event) return null
 
@@ -46,17 +45,43 @@ const createEvent = async (args: CreateEventArgs) => {
   })
 }
 
+type RunSpellArguments = {
+  spellId: string
+  inputs: Record<string, any>
+  state?: Record<string, any>
+}
+
+
 
 export const buildThothInterface = (
   initialGameState: Record<string, unknown>
 ): EngineContext => {
   // eslint-disable-next-line functional/no-let
   let gameState = { ...initialGameState }
-
   return {
-    runSpell: () => {
-      console.error("*************** RUNNING EMPTY NOTHING SPELL")
-      return {}
+    runSpell: async (flattenedInputs, spellId, state = {}) => {
+      const rootSpell = await database.instance.models.spells.findOne({
+        where: { name: spellId },
+      })
+
+      console.log('flattenedInputs, spellId, state')
+      console.log(flattenedInputs, spellId, state)
+
+      const thothInterface = buildThothInterface(state)
+      const spellRunner = new SpellRunner({ thothInterface })
+
+      const spellToRun = {
+        // TOTAL HACK HERE
+        ...(rootSpell as any).toJSON(),
+        gameState: state,
+      }
+
+      await spellRunner.loadSpell(spellToRun as SpellType)
+
+      // Get the outputs from running the spell
+      const outputs = await spellRunner.defaultRun(flattenedInputs)
+      console.log('outputs', outputs)
+      return outputs
     },
     queryGoogle: async query => {
       const response = await queryGoogle(query)
