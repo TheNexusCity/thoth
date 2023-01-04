@@ -1,5 +1,10 @@
 import { CustomError } from './../../utils/CustomError'
-import { EngineContext, ThothWorkerInputs } from '@thothai/thoth-core/types'
+import {
+  EngineContext,
+  GraphData,
+  ThothWorkerInputs,
+  Spell as SpellType,
+} from '@thothai/thoth-core/types'
 import Koa from 'koa'
 import vm2 from 'vm2'
 import { GetEventArgs, CreateEventArgs } from '@thothai/thoth-core/types'
@@ -8,6 +13,7 @@ import { searchWikipedia } from '../wikipedia/helpers'
 import queryGoogle from '../utils/queryGoogle'
 
 import { database } from './../../database'
+import SpellRunner from '@thothai/thoth-core/src/spellManager/SpellRunner'
 
 const getEvents = async ({
   type,
@@ -25,8 +31,8 @@ const getEvents = async ({
     client,
     channel,
     maxCount,
-    max_time_diff
-})
+    max_time_diff,
+  })
 
   if (!event) return null
 
@@ -46,7 +52,6 @@ const createEvent = async (args: CreateEventArgs) => {
   })
 }
 
-
 export const buildThothInterface = (
   initialGameState: Record<string, unknown>
 ): EngineContext => {
@@ -54,9 +59,26 @@ export const buildThothInterface = (
   let gameState = { ...initialGameState }
 
   return {
-    runSpell: () => {
-      console.error("*************** RUNNING EMPTY NOTHING SPELL")
-      return {}
+    runSpell: async (flattenedInputs, spellId, state) => {
+      const rootSpell = await database.instance.models.spells.findOne({
+        where: { name: spellId },
+      })
+
+      const thothInterface = buildThothInterface(state)
+      const spellRunner = new SpellRunner({ thothInterface })
+
+      const spellToRun = {
+        // TOTAL HACK HERE
+        ...(rootSpell as any).toJSON(),
+        gameState: state,
+      }
+
+      await spellRunner.loadSpell(spellToRun as SpellType)
+
+      // Get the outputs from running the spell
+      const outputs = await spellRunner.defaultRun(flattenedInputs)
+
+      return outputs
     },
     queryGoogle: async query => {
       const response = await queryGoogle(query)

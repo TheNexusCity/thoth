@@ -69,7 +69,6 @@
     "sequelize-auto": "^0.8.8",
     "similarity": "^1.2.1",
     "socket.io": "^4.4.1",
-    "sodium": "^3.0.2",
     "stripe": "^8.191.0",
     "ts-node": "^10.2.1",
     "uuid": "^8.3.2",
