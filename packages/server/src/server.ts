@@ -25,26 +25,6 @@ const router: Router = new Router()
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 
 async function init() {
-  // async function initLoop() {
-  //   new roomManager()
-  //   const expectedServerDelta = 1000 / 60
-  //   let lastTime = 0
-
-  //   // @ts-ignore
-  //   globalThis.requestAnimationFrame = f => {
-  //     const serverLoop = () => {
-  //       const now = Date.now()
-  //       if (now - lastTime >= expectedServerDelta) {
-  //         lastTime = now
-  //         f(now)
-  //       } else {
-  //         setImmediate(serverLoop)
-  //       }
-  //     }
-  //     serverLoop()
-  //   }
-  // }
-
   // required for some current consumers (i.e Thoth)
   // to-do: standardize an allowed origin list based on env values or another source of truth?
 

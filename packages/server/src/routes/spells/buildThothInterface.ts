@@ -4,17 +4,16 @@ import {
   GraphData,
   ThothWorkerInputs,
   Spell as SpellType,
+  GetEventArgs,
+  CreateEventArgs,
 } from '@thothai/thoth-core/types'
 import Koa from 'koa'
 import vm2 from 'vm2'
-import { GetEventArgs, CreateEventArgs } from '@thothai/thoth-core/types'
-
-import { searchWikipedia } from '../wikipedia/helpers'
 import queryGoogle from '../utils/queryGoogle'
+import { searchWikipedia } from '../wikipedia/helpers'
 
-import { database } from './../../database'
 import SpellRunner from '@thothai/thoth-core/src/spellManager/SpellRunner'
-
+import { database } from './../../database'
 const getEvents = async ({
   type,
   agent,
@@ -57,7 +56,6 @@ export const buildThothInterface = (
 ): EngineContext => {
   // eslint-disable-next-line functional/no-let
   let gameState = { ...initialGameState }
-
   return {
     runSpell: async (flattenedInputs, spellId, state) => {
       const rootSpell = await database.instance.models.spells.findOne({
@@ -77,7 +75,6 @@ export const buildThothInterface = (
 
       // Get the outputs from running the spell
       const outputs = await spellRunner.defaultRun(flattenedInputs)
-
       return outputs
     },
     queryGoogle: async query => {

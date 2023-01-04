@@ -159,7 +159,7 @@ export class discord_client {
     client: string | boolean,
     message: string | boolean
   ) => {
-    console.log('new message from discord:', message)
+    console.log('new message from discord:', message.content)
 
     //gets the emojis from the text and replaces to unix specific type
     const reg = emojiRegex()
