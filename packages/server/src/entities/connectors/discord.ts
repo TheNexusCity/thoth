@@ -27,109 +27,109 @@ export class discord_client {
     this.client = null
   }
 
-  //Event that is triggered when a new user is added to the server
-  async handleGuildMemberAdd(user: { user: { id: any; username: any } }) {
-    const username = user.user.username
+  // //Event that is triggered when a new user is added to the server
+  // async handleGuildMemberAdd(user: { user: { id: any; username: any } }) {
+  //   const username = user.user.username
 
-    const dateNow = new Date()
-    const utc = new Date(
-      dateNow.getUTCFullYear(),
-      dateNow.getUTCMonth(),
-      dateNow.getUTCDate(),
-      dateNow.getUTCHours(),
-      dateNow.getUTCMinutes(),
-      dateNow.getUTCSeconds()
-    )
-    const utcStr =
-      dateNow.getDate() +
-      '/' +
-      (dateNow.getMonth() + 1) +
-      '/' +
-      dateNow.getFullYear() +
-      ' ' +
-      utc.getHours() +
-      ':' +
-      utc.getMinutes() +
-      ':' +
-      utc.getSeconds()
+  //   const dateNow = new Date()
+  //   const utc = new Date(
+  //     dateNow.getUTCFullYear(),
+  //     dateNow.getUTCMonth(),
+  //     dateNow.getUTCDate(),
+  //     dateNow.getUTCHours(),
+  //     dateNow.getUTCMinutes(),
+  //     dateNow.getUTCSeconds()
+  //   )
+  //   const utcStr =
+  //     dateNow.getDate() +
+  //     '/' +
+  //     (dateNow.getMonth() + 1) +
+  //     '/' +
+  //     dateNow.getFullYear() +
+  //     ' ' +
+  //     utc.getHours() +
+  //     ':' +
+  //     utc.getMinutes() +
+  //     ':' +
+  //     utc.getSeconds()
 
-    // TODO: Replace me with direct message handler
-    log('Discord', 'join', username, utcStr)
-    // MessageClient.instance.sendUserUpdateEvent('Discord', 'join', username, utcStr)
-  }
+  //   // TODO: Replace me with direct message handler
+  //   log('Discord', 'join', username, utcStr)
+  //   // MessageClient.instance.sendUserUpdateEvent('Discord', 'join', username, utcStr)
+  // }
 
-  //Event that is triggered when a user is removed from the server
-  async handleGuildMemberRemove(user: { user: { id: any; username: any } }) {
-    const username = user.user.username
+  // //Event that is triggered when a user is removed from the server
+  // async handleGuildMemberRemove(user: { user: { id: any; username: any } }) {
+  //   const username = user.user.username
 
-    const dateNow = new Date()
-    const utc = new Date(
-      dateNow.getUTCFullYear(),
-      dateNow.getUTCMonth(),
-      dateNow.getUTCDate(),
-      dateNow.getUTCHours(),
-      dateNow.getUTCMinutes(),
-      dateNow.getUTCSeconds()
-    )
-    const utcStr =
-      dateNow.getDate() +
-      '/' +
-      (dateNow.getMonth() + 1) +
-      '/' +
-      dateNow.getFullYear() +
-      ' ' +
-      utc.getHours() +
-      ':' +
-      utc.getMinutes() +
-      ':' +
-      utc.getSeconds()
-    // TODO: Replace me with direct message handler
-    log('Discord', 'leave', username, utcStr)
-    // MessageClient.instance.sendUserUpdateEvent('Discord', 'leave', username, utcStr)
-  }
+  //   const dateNow = new Date()
+  //   const utc = new Date(
+  //     dateNow.getUTCFullYear(),
+  //     dateNow.getUTCMonth(),
+  //     dateNow.getUTCDate(),
+  //     dateNow.getUTCHours(),
+  //     dateNow.getUTCMinutes(),
+  //     dateNow.getUTCSeconds()
+  //   )
+  //   const utcStr =
+  //     dateNow.getDate() +
+  //     '/' +
+  //     (dateNow.getMonth() + 1) +
+  //     '/' +
+  //     dateNow.getFullYear() +
+  //     ' ' +
+  //     utc.getHours() +
+  //     ':' +
+  //     utc.getMinutes() +
+  //     ':' +
+  //     utc.getSeconds()
+  //   // TODO: Replace me with direct message handler
+  //   log('Discord', 'leave', username, utcStr)
+  //   // MessageClient.instance.sendUserUpdateEvent('Discord', 'leave', username, utcStr)
+  // }
 
   //Event that is triggered when a user reacts to a message
-  async handleMessageReactionAdd(
-    reaction: { emoji?: any; message?: any },
-    user: { username: string | boolean }
-  ) {
-    const { message } = reaction
-    const emojiName = emoji.getName(reaction.emoji)
+  // async handleMessageReactionAdd(
+  //   reaction: { emoji?: any; message?: any },
+  //   user: { username: string | boolean }
+  // ) {
+  //   const { message } = reaction
+  //   const emojiName = emoji.getName(reaction.emoji)
 
-    const dateNow = new Date()
-    const utc = new Date(
-      dateNow.getUTCFullYear(),
-      dateNow.getUTCMonth(),
-      dateNow.getUTCDate(),
-      dateNow.getUTCHours(),
-      dateNow.getUTCMinutes(),
-      dateNow.getUTCSeconds()
-    )
-    const utcStr =
-      dateNow.getDate() +
-      '/' +
-      (dateNow.getMonth() + 1) +
-      '/' +
-      dateNow.getFullYear() +
-      ' ' +
-      utc.getHours() +
-      ':' +
-      utc.getMinutes() +
-      ':' +
-      utc.getSeconds()
+  //   const dateNow = new Date()
+  //   const utc = new Date(
+  //     dateNow.getUTCFullYear(),
+  //     dateNow.getUTCMonth(),
+  //     dateNow.getUTCDate(),
+  //     dateNow.getUTCHours(),
+  //     dateNow.getUTCMinutes(),
+  //     dateNow.getUTCSeconds()
+  //   )
+  //   const utcStr =
+  //     dateNow.getDate() +
+  //     '/' +
+  //     (dateNow.getMonth() + 1) +
+  //     '/' +
+  //     dateNow.getFullYear() +
+  //     ' ' +
+  //     utc.getHours() +
+  //     ':' +
+  //     utc.getMinutes() +
+  //     ':' +
+  //     utc.getSeconds()
 
-    // TODO: Replace me with direct message handler
-    log(
-      'Discord',
-      message.channel.id,
-      message.id,
-      message.content,
-      user.username,
-      emojiName,
-      utcStr
-    )
-    // MessageClient.instance.sendMessageReactionAdd('Discord', message.channel.id, message.id, message.content, user.username, emojiName, utcStr)
-  }
+  //   // TODO: Replace me with direct message handler
+  //   log(
+  //     'Discord',
+  //     message.channel.id,
+  //     message.id,
+  //     message.content,
+  //     user.username,
+  //     emojiName,
+  //     utcStr
+  //   )
+  //   // MessageClient.instance.sendMessageReactionAdd('Discord', message.channel.id, message.id, message.content, user.username, emojiName, utcStr)
+  // }
 
   getUserFromMention(mention) {
     if (!mention) return mention
@@ -410,9 +410,9 @@ export class discord_client {
     })
 
     // get the value of the first entry in the object
-    const firstValue = Object.values(response)[0]
+    const { Output, Image } = response
 
-    this.handlePingSoloAgent(message.channel.id, message.id, firstValue, false)
+    this.handleMessage({chat_id: message.channel.id, message_id: message.id, responses: Output, addPing: false, image: Image})
   }
 
   //Event that is triggered when a message is deleted
@@ -844,73 +844,17 @@ export class discord_client {
       .catch(console.error)
   }
 
-  async handleSlashCommand(
-    client: any,
-    interaction: {
-      data: { name: string; options: { value: string | boolean }[] }
-      member: { user: { username: string } }
-      channel_id: string
-    }
-  ) {
-    const command = interaction.data.name.toLowerCase()
-    const sender = interaction.member.user.username + ''
-    const chatId = interaction.channel_id + ''
-
-    const dateNow = new Date()
-    const utc = new Date(
-      dateNow.getUTCFullYear(),
-      dateNow.getUTCMonth(),
-      dateNow.getUTCDate(),
-      dateNow.getUTCHours(),
-      dateNow.getUTCMinutes(),
-      dateNow.getUTCSeconds()
-    )
-    const utcStr =
-      dateNow.getDate() +
-      '/' +
-      (dateNow.getMonth() + 1) +
-      '/' +
-      dateNow.getFullYear() +
-      ' ' +
-      utc.getHours() +
-      ':' +
-      utc.getMinutes() +
-      ':' +
-      utc.getSeconds()
-    // TODO: Replace message with direct message handler
-    log(
-      sender,
-      command,
-      command === 'say' ? interaction.data.options[0].value : 'none',
-      'Discord',
-      chatId,
-      utcStr
-    )
-    // MessageClient.instance.sendSlashCommand(sender, command, command === 'say' ? interaction.data.options[0].value : 'none', 'Discord', chatId, utcStr)
-  }
-
-  async handleSlashCommandResponse(chat_id: any, response: any) {
-    this.client.channels
-      .fetch(chat_id)
-      .then(
-        (channel: { send: (arg0: any) => void; stopTyping: () => void }) => {
-          channel.send(response)
-          channel.stopTyping()
-        }
-      )
-      .catch((err: string | boolean) => log(err))
-  }
-
   async handleUserUpdateEvent(response: string) {
     log('handleUserUpdateEvent: ' + response)
   }
 
-  async handlePingSoloAgent(
-    chat_id: any,
-    message_id: any,
-    responses: string | boolean | any[] | undefined,
-    addPing: boolean
-  ) {
+  async handleMessage({
+    chat_id,
+    message_id,
+    responses,
+    addPing,
+    image
+  }) {
     this.client.channels
       .fetch(chat_id)
       .then((channel: { messages: { fetch: (arg0: any) => Promise<any> } }) => {
@@ -944,6 +888,16 @@ export class discord_client {
                 responses.length > 0
               ) {
                 let text = this.replacePlaceholders(responses)
+
+                // image is a base64 string
+                if (image) {
+                  message.channel.send({
+                    content: "I dreamed this...",
+                    files: [{ attachment: Buffer.from(image, 'base64'), name: 'image.png' }],
+                  })
+                  return;
+                }
+
                 if (addPing) {
                   message
                     .reply(text)
@@ -973,7 +927,9 @@ export class discord_client {
               ) {
                 let text = this.replacePlaceholders(responses)
                 if (addPing) {
-                  message.reply(text).then(async function (msg: any) {
+                  message.reply(text, {
+
+                  }).then(async function (msg: any) {
                     //this.onMessageResponseUpdated(channel.id, message.id, msg.id)
                   })
                 } else {
@@ -1042,129 +998,6 @@ export class discord_client {
         )
       })
       .catch((err: string | boolean) => log(err))
-  }
-
-  async handleMessageEdit(
-    message_id: any,
-    chat_id: any,
-    responses: string | any[] | undefined,
-    addPing: any
-  ) {
-    this.client.channels
-      .fetch(chat_id)
-      .then(
-        async (channel: {
-          id: any
-          messages: { fetch: (arg0: { limit: any }) => Promise<any> }
-        }) => {
-          const oldResponse = getResponse(channel.id, message_id)
-          if (oldResponse === undefined) {
-            return
-          }
-
-          channel.messages
-            .fetch(oldResponse)
-            .then(async (msg: { edit: (arg0: string) => void; id: any }) => {
-              channel.messages
-                .fetch({ limit: this.client.edit_messages_max_count })
-                .then(async (messages: any[]) => {
-                  messages.forEach(async function (edited: {
-                    id: any
-                    channel: {
-                      send: (
-                        arg0: any,
-                        arg1: { split: boolean }
-                      ) => Promise<any>
-                      stopTyping: () => void
-                    }
-                  }) {
-                    if (edited.id === message_id) {
-                      Object.keys(responses).map(async function (key, index) {
-                        log('response: ' + responses)
-                        log('response: ' + key)
-                        log('response: ' + index)
-
-                        if (
-                          responses !== undefined &&
-                          responses.length <= 2000 &&
-                          responses.length > 0
-                        ) {
-                          let text = replacePlaceholders(responses)
-                          while (
-                            text === undefined ||
-                            text === '' ||
-                            text.replace(/\s/g, '').length === 0
-                          )
-                            text = getRandomEmptyResponse(
-                              this.discord_empty_responses
-                            )
-                          log('response1: ' + text)
-                          msg.edit(text)
-                          onMessageResponseUpdated(
-                            channel.id,
-                            edited.id,
-                            msg.id
-                          )
-                        } else if (responses.length >= 2000) {
-                          let text = replacePlaceholders(responses)
-                          while (
-                            text === undefined ||
-                            text === '' ||
-                            text.replace(/\s/g, '').length === 0
-                          )
-                            text = getRandomEmptyResponse(
-                              this.discord_empty_responses
-                            )
-                          log('response2: ' + text)
-
-                          if (text.length > 0) {
-                            edited.channel
-                              .send(text, { split: true })
-                              .then(async function (msg: { id: any }) {
-                                onMessageResponseUpdated(
-                                  channel.id,
-                                  edited.id,
-                                  msg.id
-                                )
-                              })
-                          }
-                        } else {
-                          const emptyResponse = getRandomEmptyResponse(
-                            this.discord_empty_responses
-                          )
-                          log('sending empty response 2: ' + emptyResponse)
-                          if (
-                            emptyResponse !== undefined &&
-                            emptyResponse !== '' &&
-                            emptyResponse.replace(/\s/g, '').length !== 0
-                          ) {
-                            let text = emptyResponse
-                            while (
-                              text === undefined ||
-                              text === '' ||
-                              text.replace(/\s/g, '').length === 0
-                            )
-                              text = getRandomEmptyResponse(
-                                this.discord_empty_responses
-                              )
-                            log('response4: ' + text)
-                            msg.edit(text)
-                            onMessageResponseUpdated(
-                              channel.id,
-                              edited.id,
-                              msg.id
-                            )
-                          }
-                        }
-                      })
-                      edited.channel.stopTyping()
-                    }
-                  })
-                })
-                .catch((err: string | boolean) => log(err))
-            })
-        }
-      )
   }
 
   prevMessage = {}
@@ -1395,32 +1228,18 @@ export class discord_client {
     }
 
     this.client.on('messageCreate', this.messageCreate.bind(null, this.client))
-    // this.client.on('messageDelete', this.messageDelete.bind(null, this.client))
-    // this.client.on('messageUpdate', this.messageUpdate.bind(null, this.client))
     // this.client.on(
-    //   'presenceUpdate',
-    //   this.presenceUpdate.bind(null, this.client)
+    //   'guildMemberAdd',
+    //   async (user: { user: { id: any; username: any } }) => {
+    //     this.handleGuildMemberAdd(user)
+    //   }
     // )
-
-    this.client.on(
-      'interactionCreate',
-      async (interaction: string | boolean) => {
-        log('Handling interaction', interaction)
-        this.handleSlashCommand(client, interaction)
-      }
-    )
-    this.client.on(
-      'guildMemberAdd',
-      async (user: { user: { id: any; username: any } }) => {
-        this.handleGuildMemberAdd(user)
-      }
-    )
-    this.client.on('guildMemberRemove', async (user: any) => {
-      this.handleGuildMemberRemove(user)
-    })
-    this.client.on('messageReactionAdd', async (reaction: any, user: any) => {
-      this.handleMessageReactionAdd(reaction, user)
-    })
+    // this.client.on('guildMemberRemove', async (user: any) => {
+    //   this.handleGuildMemberRemove(user)
+    // })
+    // this.client.on('messageReactionAdd', async (reaction: any, user: any) => {
+    //   this.handleMessageReactionAdd(reaction, user)
+    // })
 
     // this.client.commands = new Discord.Collection()
 

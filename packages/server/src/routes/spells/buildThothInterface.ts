@@ -7,7 +7,6 @@ import {
   GetEventArgs,
   CreateEventArgs,
 } from '@thothai/thoth-core/types'
-import Koa from 'koa'
 import vm2 from 'vm2'
 import queryGoogle from '../utils/queryGoogle'
 import { searchWikipedia } from '../wikipedia/helpers'
@@ -62,13 +61,13 @@ export const buildThothInterface = (
         where: { name: spellId },
       })
 
-      const thothInterface = buildThothInterface(state)
+      const thothInterface = buildThothInterface({})
       const spellRunner = new SpellRunner({ thothInterface })
 
       const spellToRun = {
         // TOTAL HACK HERE
         ...(rootSpell as any).toJSON(),
-        gameState: state,
+        gameState: {},
       }
 
       await spellRunner.loadSpell(spellToRun as SpellType)

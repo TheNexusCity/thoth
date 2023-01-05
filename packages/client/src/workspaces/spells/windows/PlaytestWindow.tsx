@@ -136,6 +136,8 @@ const Playtest = ({ tab }) => {
       // todo could throw an error here
       if (!json) return
 
+        console.log('attempting to send json', json)
+
       toSend = {
         input: value,
         ...JSON.parse(json),

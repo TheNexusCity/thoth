@@ -15,6 +15,22 @@ import { CustomError } from '../utils/CustomError'
 
 export const modules: Record<string, unknown> = {}
 
+const image_generation = async (ctx: Koa.Context) => {
+  const url = "http://localhost:7860/sdapi/v1/txt2img"
+
+  // proxy the request to the url and then return the respons
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(ctx.request.body),
+  })
+  
+  const data = await response.json()
+  ctx.body = data
+}
+
 const getEntitiesHandler = async (ctx: Koa.Context) => {
   try {
     let data = await database.instance.getEntities()
@@ -398,5 +414,9 @@ export const entities: Route[] = [
   {
     path: '/query_google',
     post: queryGoogle,
+  },
+  {
+    path: '/image_generation',
+    post: image_generation,
   }
 ]

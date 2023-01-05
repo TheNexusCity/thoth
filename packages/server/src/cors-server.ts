@@ -19,7 +19,7 @@ export class cors_server {
             cert: fs.readFileSync('certs/cert.pem'),
           },
           originWhitelist: [],
-          requireHeader: ['origin', 'x-requested-with'],
+          // requireHeader: ['origin', 'x-requested-with'],
           removeHeaders: ['cookie', 'cookie2'],
           redirectSameOrigin: true,
           httpProxyOptions: {
