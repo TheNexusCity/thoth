@@ -36,7 +36,6 @@ type InputReturn = {
   }[]
   eth_private_key: string
   eth_public_address: string
-  channel_type: string
 }
 
 export class InputDestructureComponent extends ThothComponent<
@@ -59,7 +58,6 @@ export class InputDestructureComponent extends ThothComponent<
         eth_private_key: 'output',
         eth_public_address: 'output',
         roomInfo: 'output',
-        channel_type: 'output',
         trigger: 'option',
       },
       init: (task = {} as Task, node: ThothNode) => {
@@ -84,7 +82,7 @@ export class InputDestructureComponent extends ThothComponent<
     const speaker = new Rete.Output('speaker', 'speaker', stringSocket)
     const agent = new Rete.Output('agent', 'agent', stringSocket)
     const client = new Rete.Output('client', 'client', stringSocket)
-    const channelId = new Rete.Output('channel', 'channel', stringSocket)
+    const channel = new Rete.Output('channel', 'channel', stringSocket)
     const entity = new Rete.Output('entity', 'entity', stringSocket)
     const private_key = new Rete.Output(
       'eth_private_key',
@@ -97,12 +95,7 @@ export class InputDestructureComponent extends ThothComponent<
       stringSocket
     )
     const roomInfo = new Rete.Output('roomInfo', 'roomInfo', arraySocket)
-    // eslint-disable-next-line camelcase
-    const channel_type = new Rete.Output(
-      'channel_type',
-      'channel_type',
-      stringSocket
-    )
+
     const dataOutput = new Rete.Output('trigger', 'Trigger', triggerSocket)
 
     return node
@@ -111,10 +104,9 @@ export class InputDestructureComponent extends ThothComponent<
       .addOutput(speaker)
       .addOutput(agent)
       .addOutput(client)
-      .addOutput(channelId)
+      .addOutput(channel)
       .addOutput(entity)
       .addOutput(roomInfo)
-      .addOutput(channel_type)
       .addOutput(private_key)
       .addOutput(public_address)
       .addOutput(out)
@@ -128,6 +120,7 @@ export class InputDestructureComponent extends ThothComponent<
     outputs: ThothWorkerOutputs,
     { silent }: { silent: boolean }
   ) {
+    console.log('inputs', inputs)
     // eslint-disable-next-line prettier/prettier
     const agent = inputs.agent != null ? inputs.agent[0] : inputs
 
@@ -137,16 +130,15 @@ export class InputDestructureComponent extends ThothComponent<
     // If there are outputs, we are running as a module input and we use that value
 
     return {
-      output: typeof agent === 'string' ? agent : (agent as any).Input,
-      speaker: (agent as any)['Speaker'] ?? 'Speaker',
-      agent: (agent as any)['Agent'] ?? 'Agent',
-      client: (agent as any)['Client'] ?? 'Playtest',
-      channel: (agent as any)['ChannelID'] ?? 'TestChannel',
-      entity: (agent as any)['Entity'],
-      roomInfo: (agent as any)['RoomInfo'],
+      output: typeof agent === 'string' ? agent : (agent as any).input,
+      speaker: (agent as any)['speaker'] ?? 'Speaker',
+      agent: (agent as any)['agent'] ?? 'Agent',
+      client: (agent as any)['client'] ?? 'Playtest',
+      channel: (agent as any)['channel'] ?? 'TestChannel',
+      entity: (agent as any)['entity'],
+      roomInfo: (agent as any)['roomInfo'],
       eth_private_key: (agent as any)['eth_private_key'],
       eth_public_address: (agent as any)['eth_public_address'],
-      channel_type: (agent as any)['Channel'],
     }
   }
 }

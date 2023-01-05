@@ -613,11 +613,10 @@ const EntityWindow = ({ id, updateCallback }) => {
   function ChatBox({
     spell_handler,
     client,
-    channelId,
+    channel,
     entity,
     speaker,
     agent,
-    channel,
     eth_private_key,
     eth_public_address
   }) {
@@ -633,13 +632,13 @@ const EntityWindow = ({ id, updateCallback }) => {
           console.log('url is: ', url)
           const response = await axios.post(`${url}`, {
             inputs: {
-              Input: value,
-              Speaker: speaker,
-              Agent: agent,
-              Client: client,
-              ChannelID: channelId,
-              Entity: entity,
-              Channel: channel,
+              input: value,
+              speaker: speaker,
+              agent: agent,
+              client: client,
+              // channelID: channel,
+              entity: entity,
+              channel: channel,
               eth_private_key,
               eth_public_address
             },
@@ -695,11 +694,10 @@ const EntityWindow = ({ id, updateCallback }) => {
       <ChatBox
         client={'EntityWindow'}
         spell_handler={discord_spell_handler_incoming}
-        channelId={'EntityWindow'}
+        channel={'EntityWindow'}
         entity={id}
         speaker={'Speaker'}
         agent={'Agent'}
-        channel={'EntityWindow'}
         eth_private_key={eth_private_key}
         eth_public_address={eth_public_address}
       />

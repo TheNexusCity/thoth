@@ -1,8 +1,6 @@
 // @ts-nocheck
 import { database } from '../database'
-import { handleInput } from '../entities/connectors/handleInput'
 import 'regenerator-runtime/runtime'
-//@ts-ignore
 // import weaviate from 'weaviate-client'
 import Koa from 'koa'
 import 'regenerator-runtime/runtime'
@@ -314,14 +312,6 @@ const hfRequest = async (ctx: Koa.Context) => {
 //   }
 //   return (ctx.body = { data: '' })
 // }
-
-const getEntityData = async (ctx: Koa.Context) => {
-  const agent = ctx.request.query.agent as string
-
-  const data = await database.instance.getEntity(agent)
-
-  return (ctx.body = { agent: data })
-}
 
 const getEntitiesInfo = async (ctx: Koa.Context) => {
   const id = (ctx.request.query.id as string)

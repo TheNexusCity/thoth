@@ -401,7 +401,7 @@ export class discord_client {
       speaker: message.author.username,
       agent: this.discord_bot_name,
       client: 'discord',
-      channelId: message.channel.id,
+      // channelId: message.channel.id,
       entity: this.entity,
       eth_private_key: this.eth_private_key,
       eth_public_address: this.eth_public_address,

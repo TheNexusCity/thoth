@@ -21,25 +21,25 @@ function CreateSpellHandler({ spell }) {
     speaker,
     agent,
     client,
-    channelId,
+    channel,
     entity,
     eth_private_key,
     eth_public_address,
     roomInfo,
-    channel
   }) {
     const spellInputs = {
-      Input: message,
-      Speaker: speaker,
-      Agent: agent,
-      Client: client,
-      ChannelID: channelId,
-      Entity: entity,
-      RoomInfo: roomInfo,
-      Channel: channel,
-      eth_private_key,
-      eth_public_address
-    } as any
+      input: {
+        input: message,
+        speaker: speaker,
+        agent: agent,
+        client: client,
+        channel: channel,
+        entity: entity,
+        roomInfo: roomInfo,
+        eth_private_key,
+        eth_public_address
+      } as any
+    }
     console.log('spellInputs', spellInputs)
     const spellOutputs = await spellRunner.defaultRun(spellInputs)
     console.log('spellOutputs', spellOutputs)
@@ -350,12 +350,11 @@ export class Entity {
           speaker: 'loop',
           agent: agent_name,
           client: 'loop',
-          channelId: 'loop',
+          channel: 'loop',
           entity: this,
           eth_private_key,
           eth_public_address,
           roomInfo: [],
-          channel: 'auto'
       })
         if (resp && (resp as string)?.length > 0) {
           console.log('Loop Response:', resp)

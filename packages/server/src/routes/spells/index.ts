@@ -17,6 +17,8 @@ const runSpellHandler = async (ctx: Koa.Context) => {
   const { spell } = ctx.params
   const { userGameState = {} } = ctx.request.body
 
+  console.log('ctx.request.body is', ctx.request.body)
+
   const rootSpell = await database.instance.models.spells.findOne({
     where: { name: spell },
   })

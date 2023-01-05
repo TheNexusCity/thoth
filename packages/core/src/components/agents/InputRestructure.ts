@@ -21,13 +21,13 @@ const info = `Restructure Agent Data`
 
 type InputReturn = {
   output: {
-    Input: string
-    Speaker: string
-    Agent: string
-    Client: string
-    ChannelID: string
-    Entity: object
-    RoomInfo: {
+    input: string
+    speaker: string
+    agent: string
+    client: string
+    // channelID: string
+    entity: object
+    roomInfo: {
       user: string
       inConversation: boolean
       isBot: boolean
@@ -70,7 +70,7 @@ export class InputRestructureComponent extends ThothComponent<
     const speaker = new Rete.Input('speaker', 'speaker', stringSocket)
     const agent = new Rete.Input('agent', 'agent', stringSocket)
     const client = new Rete.Input('client', 'client', stringSocket)
-    const channelId = new Rete.Input('channel', 'channel', stringSocket)
+    const channel = new Rete.Input('channel', 'channel', stringSocket)
     const entity = new Rete.Input('entity', 'entity', stringSocket)
     const roomInfo = new Rete.Input('roomInfo', 'roomInfo', arraySocket)
     const private_key = new Rete.Input(
@@ -90,7 +90,7 @@ export class InputRestructureComponent extends ThothComponent<
       .addInput(speaker)
       .addInput(agent)
       .addInput(client)
-      .addInput(channelId)
+      .addInput(channel)
       .addInput(entity)
       .addInput(roomInfo)
       .addInput(private_key)
@@ -116,13 +116,13 @@ export class InputRestructureComponent extends ThothComponent<
 
     return {
       output: {
-        Input: agent.input,
-        Speaker: agent.speaker,
-        Agent: agent.agent,
-        Client: agent.client,
-        ChannelID: agent.channel,
-        Entity: agent.entity,
-        RoomInfo: agent.roomInfo,
+        input: agent.input,
+        speaker: agent.speaker,
+        agent: agent.agent,
+        client: agent.client,
+        // channelID: agent.channel,
+        entity: agent.entity,
+        roomInfo: agent.roomInfo,
         eth_private_key: agent.eth_private_key,
         eth_public_address: agent.eth_public_address,
       },

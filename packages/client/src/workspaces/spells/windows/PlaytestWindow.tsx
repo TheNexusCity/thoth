@@ -118,7 +118,7 @@ const Playtest = ({ tab }) => {
       client.service('spell-runner').create({
         spellId: tab.spellId,
         inputs: {
-          Input: value,
+          input: value,
         },
       })
     }
@@ -140,6 +140,7 @@ const Playtest = ({ tab }) => {
         input: value,
         ...JSON.parse(json),
       }
+      console.log('toSend', toSend)
     }
 
     publish($PLAYTEST_INPUT(tab.id), toSend)
